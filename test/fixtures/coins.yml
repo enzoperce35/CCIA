@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  coin_id: MyString
+  binance_min: 1.5
+  buy: 1.5
+  sell: 1.5
+  takes: 1.5
+
+two:
+  name: MyString
+  coin_id: MyString
+  binance_min: 1.5
+  buy: 1.5
+  sell: 1.5
+  takes: 1.5

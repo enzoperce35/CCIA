@@ -1,1 +1,3 @@
-<%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %>
+<%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br>
+
+<%= @client.exchange_rate(from: 'smooth-love-potion', to: 'php') %>

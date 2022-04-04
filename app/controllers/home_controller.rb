@@ -5,5 +5,6 @@ class HomeController < ApplicationController
   
   def index
     @client = CoingeckoRuby::Client.new
+    @coins = @client.coins_list.map{ |h| h['id'] }
   end
 end
