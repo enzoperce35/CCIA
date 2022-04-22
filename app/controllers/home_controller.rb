@@ -1,10 +1,9 @@
-require 'coingecko_ruby'
-
 class HomeController < ApplicationController
   before_action :authenticate_user!
   
   def index
-    @client = CoingeckoRuby::Client.new
-    @coins = @client.coins_list.map{ |h| h['id'] }
+    @trade = params[:trade]
+
+    @buy_coins, @observe_coins = helpers.insert_extra_values_from( Coin.all )
   end
 end

@@ -1,2 +1,8 @@
-<h1>Coins#new</h1>
-<p>Find me in app/views/coins/new.html.erb</p>
+<%= simple_form_for @coin do |f| %>
+  <%= f.label :Coin %> 
+  <%= f.input :coin_id, as: :select, collection: @coins, label_method: :first, value_method: :second, label: false %><br>
+  
+  <%= f.input :status, as: :hidden, input_html: { :value => @status } %><br>
+  
+  <%= f.submit "#{@status} coin".titleize %> 
+<% end %>

@@ -1,3 +1,10 @@
-<%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br>
+<%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %>
+<%= link_to 'Trade', root_path(trade: true), method: 'get' %>
+<%= link_to 'Observe Coin', new_coin_path(status: 'observe'), method: 'get' %>
+<%= link_to 'Buy Coin', new_coin_path(status: 'buy'), method: 'get' %>
 
-<%= @client.exchange_rate(from: 'smooth-love-potion', to: 'php') %>
+<% if @trade %>
+  <%= render 'trading_view' %>
+<% else %>
+  <%= render 'coin_view' %>
+<% end %>

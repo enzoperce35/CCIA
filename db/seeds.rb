@@ -1,7 +1,17 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+require_relative './coin_status.rb'
+
+puts 'seeding...'
+
+  Coin.create(coin_id: 'bitcoin')
+  Coin.create(coin_id: 'ethereum')
+  Coin.create(coin_id: 'smooth-love-potion')
+  Coin.create(coin_id: 'ripple')
+  Coin.create(coin_id: 'shiba-inu')
+  Coin.create(coin_id: 'ellipsis')
+  Coin.create(coin_id: 'solana')
+  Coin.create(coin_id: 'cardano')
+  Coin.create(coin_id: 'dogecoin')
+
+  set_seeded_coin_status
+  
+puts 'seeding done'
