@@ -43,16 +43,12 @@ class CoinsController < ApplicationController
   end
 
   def trade
-    buy = Coin.find_by(coin_id: params[:buy])
-    sell = Coin.find_by(coin_id: params[:sell])
+    if params[:to_switch].present?
+      helpers.switch_status( params[:to_switch] )
+    else
+      helpers.perform_trade( params[:buy], params[:sell] )
+    end
     
-    coin = market( sell )
-    
-    sell_price = coin['current_price']
-      
-    buy.update(status: 'observe', value: nil)
-    sell.update(status: 'buy', value: sell_price)
-
     redirect_to root_path
   end
 

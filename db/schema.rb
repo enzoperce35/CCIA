@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 2022_04_04_212353) do
 
   create_table "coins", force: :cascade do |t|
     t.string "coin_id"
-    t.string "status"
+    t.string "status", default: "observe"
     t.float "value"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

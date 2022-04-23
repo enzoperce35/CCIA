@@ -2,6 +2,24 @@ require_relative './extra_values.rb'
 
 module CoinsHelper
 
+  def switch_status( coin )
+    coin = Coin.find_by(coin_id: coin)
+    
+    if user_coin_has_entry?( market( coin ) ) 
+      coin.update( status: 'observe', value: nil )
+    else
+      coin.update(status: 'buy', value: current_price_of( market( coin ) ) )
+    end
+  end
+  
+  def perform_trade(buy, sell)
+    buy = Coin.find_by( coin_id: buy )
+    sell = Coin.find_by( coin_id: sell )
+      
+    buy.update( status: 'observe', value: nil )
+    sell.update( status: 'buy', value: current_price_of( market( sell ) ) )
+  end
+
   def arrange(coins, buy = [], observe = [])
     coins.each do |coin|
       user_coin_has_entry?(coin) ? buy.push(coin) : observe.push(coin)
@@ -47,10 +65,6 @@ module CoinsHelper
     coin['current_price']
   end
 
-  def is_observing?(coin)
-    coin.status == 'observe'
-  end
-
   def insert_values_from(coin)
     coin = market(coin)
   
@@ -66,7 +80,6 @@ module CoinsHelper
       coin = insert_values_from(coin)
       arr << coin
     end
-    
-    arrange(arr)
+    arr
   end
 end

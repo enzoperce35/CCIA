@@ -1,5 +1,3 @@
-require_relative './coin_status.rb'
-
 puts 'seeding...'
 
   Coin.create(coin_id: 'bitcoin')
@@ -11,7 +9,5 @@ puts 'seeding...'
   Coin.create(coin_id: 'solana')
   Coin.create(coin_id: 'cardano')
   Coin.create(coin_id: 'dogecoin')
-
-  set_seeded_coin_status
   
 puts 'seeding done'

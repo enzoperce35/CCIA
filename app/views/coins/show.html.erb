@@ -1,13 +1,20 @@
+<% action = user_coin_has_entry?(@market) ? 'observe' : 'buy' %> 
 <% not_needed_infos = ['image', 'market_cap', 'fully_diluted_valuation', 'ath_date',
                        'ath_change_percentage', 'atl_change_percentage', 'atl_date', 'roi'] %>
 
 <div class="parent-container d-flex">
   <div class="container">
     <img id= 'show-img', src=<%= @market['image'] %>>
+  
+    <div> 
+      <button>
+        <%= link_to 'Delete Coin', coin_path(@coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{@market['name']} ?"} %>
+      </button>
     
-    <button>
-      <%= link_to 'Delete Coin', coin_path(@coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{@market['name']} ?"} %>
-    </button>
+      <button>
+        <%= link_to (action + ' coin').titleize, trade_path(to_switch: @market['id']), method: 'post', data: { confirm: "Are you sure you want to #{action} #{@market['name']} ?"} %>
+      </button>
+    </div>
   </div>
   
   <div class="container">

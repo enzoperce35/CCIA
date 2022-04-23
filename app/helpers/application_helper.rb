@@ -1,9 +1,9 @@
 module ApplicationHelper
-  def scientific_notation?(number)
+  def scientific_notation?(number)  #inactive
     number.to_s.include?('-')
   end
   
-  def humanize_price(number)
+  def humanize_price(number)  #inactive
     if scientific_notation?(number)
       "%.8f" % number
     else

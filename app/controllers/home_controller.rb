@@ -4,6 +4,8 @@ class HomeController < ApplicationController
   def index
     @trade = params[:trade]
 
-    @buy_coins, @observe_coins = helpers.insert_extra_values_from( Coin.all )
+    @coins = helpers.insert_extra_values_from( Coin.all )
+
+    @buy_coins, @observe_coins = helpers.arrange(@coins)
   end
 end

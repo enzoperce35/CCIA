@@ -1,12 +1,12 @@
-<% all_coins = [@buy_coins, @observe_coins].flatten(1).sort_by { |k| k['vs_24h'] }.flatten(1).reverse %>
+<% all_coins = @coins.sort_by { |k| k['vs_24h'] }.reverse %>
 
 <table class = 'table'>
   
   <thead>
     <tr>
       <th>Coin</th>
-      <th></th>
-      <th>Current Price</th>
+      <th>Price</th>
+      <th>24_h Data</th>
     </tr>
   </thead>
   
@@ -27,14 +27,13 @@
           <%= "\u{1F4B5}".encode('utf-8') if user_coin_has_entry?(coin) %>
         </td>
 
+        <td><%= current_price_of(coin) %></td>
+
         <td>
           <div class="progress" style="width: 150px">
             <div id=<%= id_target %> class="progress-bar <%= 'bg-success' %>" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </td>
-        
-       <td><%= coin['current_price'].round(5) %></td>
-      
       </tr>
     </tbody>
 
