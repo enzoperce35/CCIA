@@ -3,6 +3,19 @@
 <%= link_to 'Observe Coin', new_coin_path(status: 'observe'), method: 'get' %>
 <%= link_to 'Buy Coin', new_coin_path(status: 'buy'), method: 'get' %>
 
+<script>
+  data_arr = []
+  id_arr = []
+
+  function render_data(data_arr, id_arr) {
+  data_arr.forEach((data, index) => {
+    const id = id_arr[index]
+   
+     document.getElementById("prog-" + id).style.width = data;
+    });
+  };
+</script>
+
 <% if @trade %>
   <%= render 'trading_view' %>
 <% else %>
