@@ -8,18 +8,3 @@
 <% else %>
   <%= render 'coin_view' %>
 <% end %>
-
-<script>
-  window.setInterval(function () {
-      if (counter === 0) {
-          clearInterval(counter);
-      }
-
-  }, 1000);
-
-  window.setInterval('refresh()', 30000);
-
-  function refresh() {
-      window  .location.reload();
-  }
-</script>
