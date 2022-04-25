@@ -1,16 +1,56 @@
 module CoinsHelper
 
+  def sum_price_changes(prices, x = 0)
+    prices.each { |p| x += p[1]}
+
+    x
+  end
+
+  def analyze_change_in(coin, trends, arr = [])
+    trends.each_with_index do |trend, index|
+      next if index == 0
+    
+      price_a = trends[index-1]
+    
+      price_b = trend
+
+      change_indicator = price_a <= price_b ? 'green' : 'red'
+    
+      arr << [ change_indicator, (percentage_between( price_b, price_a ) - 100).abs ]
+    end
+    arr
+  end
+
+  def get_last_ten_changes_of(prices, arr = [])
+    prices = prices['prices'][-11..-1]
+    
+    prices.each { |_, price|  arr << price } 
+      
+    arr
+  end
+  
+  def insert_price_trends(coins)
+    coins.each do |coin|
+      prices = client.minutely_historical_price(coin['id'])
+    
+      trends = get_last_ten_changes_of(prices)
+      
+      coin.store('trend', analyze_change_in(coin, trends) )
+    end
+    coins
+  end
+
   def switch_status( coin )
-    coin = Coin.find_by(coin_id: coin)
+    coin = Coin.find_by( coin_id: coin )
     
     if user_coin_has_entry?( market( coin ) ) 
       coin.update( status: 'observe', value: nil )
     else
-      coin.update(status: 'buy', value: current_price_of( market( coin ) ) )
+      coin.update( status: 'buy', value: current_price_of( market( coin ) ) )
     end
   end
   
-  def perform_trade(buy, sell)
+  def perform_trade( buy, sell )
     buy = Coin.find_by( coin_id: buy )
     sell = Coin.find_by( coin_id: sell )
       
@@ -18,9 +58,9 @@ module CoinsHelper
     sell.update( status: 'buy', value: current_price_of( market( sell ) ) )
   end
 
-  def arrange(coins, buy = [], observe = [])
+  def arrange( coins, buy = [], observe = [] )
     coins.each do |coin|
-      user_coin_has_entry?(coin) ? buy.push(coin) : observe.push(coin)
+      user_coin_has_entry?( coin ) ? buy.push( coin ) : observe.push( coin )
     end
   
     buy = buy.sort_by { |k| k['user_price_gain'] }

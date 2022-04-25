@@ -12,7 +12,7 @@ module ApplicationHelper
   end
 
   def percentage_between(price_a, price_b)
-    (price_a.to_f / price_b.to_f  * 100).round(2)
+    ((price_a.to_f / price_b.to_f)  * 100).round(2)
   end
 
   def assemble(list)

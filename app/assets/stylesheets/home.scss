@@ -6,3 +6,63 @@ img {
   padding: 5px;
   width: 25px;  
  }
+
+.my-grid {
+  border-radius: 2px;
+  width: 150px;
+  margin-top: 3px;
+}
+  
+.col-1-10 {
+  height: 10px;
+  float: left;
+}
+  
+.col-2-10 {
+  height: 10px;
+  float: left;
+}
+  
+.col-3-10 {
+  height: 10px;
+  float: left;
+}
+  
+.col-4-10 {
+  height: 10px;
+  float: left;
+}
+
+.col-5-10 {
+  height: 10px;
+  float: left;
+}
+  
+.col-6-10 {
+  height: 10px;
+  float: left;
+}
+    
+.col-7-10 {
+  height: 10px;
+  float: left;
+}
+    
+.col-8-10 {
+  height: 10px;
+  float: left;
+}
+    
+.col-9-10 {
+  height: 10px;
+  float: left;
+}
+    
+.col-10-10 {
+  height: 10px;
+  float: left;;
+}
+    
+.my-grid:after {
+  clear:both;
+}
