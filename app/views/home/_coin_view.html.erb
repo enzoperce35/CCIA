@@ -24,7 +24,7 @@
           <div style="font-size: smaller;">
             <img src="<%= coin['image']%>">
             <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-            <%= "\u{1F4B5}".encode('utf-8') if is_user_owned?(user_coin) %>
+            <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
           </div>
 
           <hr style="width:85px; margin-top:0%; margin-bottom:0%">

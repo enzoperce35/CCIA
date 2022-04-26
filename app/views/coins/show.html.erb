@@ -1,26 +1,12 @@
 <% not_needed_infos = ['image', 'market_cap', 'fully_diluted_valuation', 'ath_date',
                        'ath_change_percentage', 'atl_change_percentage', 'atl_date', 'roi'] %>
 
-<div class="parent-container d-flex">
-  <div class="container">
-    <img id= 'show-img', src=<%= @market['image'] %>>
-  
-    <div> 
-      <button>
-        <%= link_to 'Delete Coin', coin_path(@coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{@market['name']} ?"} %>
-      </button>
-
-      <button>
-        <% if is_user_owned?(@coin) %>
-          <%= link_to ('Unmark Coin'), coin_path(@coin), method: 'patch' %>
-        <% else %>
-          <%= link_to ('Mark Coin'), coin_path(@coin), method: 'patch' %>
-        <% end %>
-      </button>
-    </div>
+<div class="container">
+  <div style="float:left; margin-top:4%; margin-left: 5%">
+    <img id= 'show-img' src=<%= @market['image'] %>">
   </div>
   
-  <div class="container">
+  <div style="float:left; position:absolute">
     <% @market.each do |key,val| %>
       <% next if not_needed_infos.include?(key) %>
       

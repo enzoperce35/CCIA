@@ -1,0 +1,27 @@
+<div style="text-align:right">Prices will refresh in <span id="cnt" style="color:red;">50</span> Seconds</div>
+
+<script>
+  var counter = 50;
+    
+  window.setInterval(function () {
+    counter--;
+        
+    if (counter >= 0) {
+      var span;
+        span = document.getElementById("cnt");
+        span.innerHTML = counter;
+      }
+        
+      if (counter === 0) {
+        clearInterval(counter);
+      }
+  
+    }, 1000);
+  
+  window.setInterval('refresh()', 50000);
+  
+  function refresh() {
+    window  .location.reload();
+  }
+</script>
+  

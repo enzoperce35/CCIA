@@ -1,6 +1,5 @@
 class CoinsController < ApplicationController
   def new
-    @status = params[:status]
     @coin = Coin.new
     @coins = helpers.assemble(helpers.client.coins_list)
   end

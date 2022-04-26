@@ -12,19 +12,4 @@
 </script>
 
 <%= render 'coin_view' %>
-
-<script>
-  window.setInterval(function () {
-      if (counter === 0) {
-          clearInterval(counter);
-      }
-
-  }, 1000);
-
-  window.setInterval('refresh()', 50000);
-
-  function refresh() {
-      window  .location.reload();
-  }
- 
-</script>
+<%= render 'observe_mode' if @observe %>
