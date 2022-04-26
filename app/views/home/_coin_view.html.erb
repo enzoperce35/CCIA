@@ -6,8 +6,7 @@
   <thead>
     <tr>
       <th>Coin</th>
-      <th>Price</th>
-      <th>24_h Data</th>
+      <th>Price Data</th>
     </tr>
   </thead>
   
@@ -21,16 +20,22 @@
     
     <tbody>
       <tr>
-        <td>
-          <img src="<%= coin['image']%>">
-          <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-          <%= "\u{1F4B5}".encode('utf-8') if is_user_owned?(user_coin) %>
+        <td style="margin-bottom: 0%;">
+          <div style="font-size: smaller;">
+            <img src="<%= coin['image']%>">
+            <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
+            <%= "\u{1F4B5}".encode('utf-8') if is_user_owned?(user_coin) %>
+          </div>
+
+          <hr style="width:85px; margin-top:0%; margin-bottom:0%">
+
+          <div style="font-size: smaller; margin-left:5px">
+            <%= "\u{20B1}".encode('utf-8') + current_price_of(coin).to_s %>
+          </div>
         </td>
 
-        <td><%= current_price_of(coin) %></td>
-
         <td>
-          <div class="progress" style="width: 150px">
+          <div class="progress" style="width: 150px; margin-top:7px">
             <div id=<%= id_target %> class="progress-bar <%= 'bg-info' %>" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           
@@ -45,8 +50,7 @@
               <% trend_class = 'col-' + (index + 1).to_s + '-10 '%>
 
               <div class=<%= trend_class %> style=<%= trend %>></div>
-              
-              <% end %>
+            <% end %>
           </div>
         </td>
       </tr>
