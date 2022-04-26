@@ -21,11 +21,10 @@
     
     <tbody>
       <tr>
-        <% warning_bg = "background-color:red;" %>
-        <td style=<%= coin_reaches_lose_margin?(coin) ? warning_bg : '' %> >
+        <td>
           <img src="<%= coin['image']%>">
           <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-          <%= "\u{1F4B5}".encode('utf-8') if user_coin_has_entry?(coin) %>
+          <%= "\u{1F4B5}".encode('utf-8') if is_user_owned?(user_coin) %>
         </td>
 
         <td><%= current_price_of(coin) %></td>
@@ -34,13 +33,13 @@
           <div class="progress" style="width: 150px">
             <div id=<%= id_target %> class="progress-bar <%= 'bg-info' %>" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
+          
           <div class="my-grid">
             <% trend_sum = sum_price_changes(coin['trend']) %>
             
             <% coin['trend'].each_with_index do |trend, index| %>
               <% trend_color, trend_value = trend %>
               <% trend_change = percentage_between( trend_value, trend_sum ).to_s + '%;' %>
-              
               
               <% trend = "width:" + trend_change + "background-color:" + trend_color %>
               <% trend_class = 'col-' + (index + 1).to_s + '-10 '%>

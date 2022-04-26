@@ -11,11 +11,7 @@
   };
 </script>
 
-<% if @trade %>
-  <%= render 'trading_view' %>
-<% else %>
-  <%= render 'coin_view' %>
-<% end %>
+<%= render 'coin_view' %>
 
 <script>
   window.setInterval(function () {
@@ -27,9 +23,6 @@
 
   window.setInterval('refresh()', 30000);
 
-  function refresh() {
-      window  .location.reload();
-  }
-
+ 
  
 </script>

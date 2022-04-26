@@ -40,55 +40,9 @@ module CoinsHelper
     coins
   end
 
-  def switch_status( coin )
-    coin = Coin.find_by( coin_id: coin )
-    
-    if user_coin_has_entry?( market( coin ) ) 
-      coin.update( status: 'observe', value: nil )
-    else
-      coin.update( status: 'buy', value: current_price_of( market( coin ) ) )
-    end
-  end
-  
-  def perform_trade( buy, sell )
-    buy = Coin.find_by( coin_id: buy )
-    sell = Coin.find_by( coin_id: sell )
-      
-    buy.update( status: 'observe', value: nil )
-    sell.update( status: 'buy', value: current_price_of( market( sell ) ) )
-  end
-
-  def arrange( coins, buy = [], observe = [] )
-    coins.each do |coin|
-      user_coin_has_entry?( coin ) ? buy.push( coin ) : observe.push( coin )
-    end
-  
-    buy = buy.sort_by { |k| k['user_price_gain'] }
-    observe = observe.sort_by { |k| k['vs_24h'] }
-      
-    [buy, observe]
-  end
-
-  def coin_reaches_lose_margin?(coin)
-    user_coin_has_entry?(coin) &&
-    coin['user_price_gain'] < -5
-  end
-  
-  def insert_user_price_of(coin)
-    key = 'entry_price' 
-  
-    val = user(coin).value
-  
-    insert_pair(coin, 'current_price', {key=>val}, :before)
-  end
-  
   def user_coin_has_entry?(coin)
     user(coin).status == 'buy' &&
     user(coin).value.present?
-  end
-  
-  def entry_price_of(coin)
-    user(coin).value
   end
 
   def low_24h(coin)
@@ -101,16 +55,6 @@ module CoinsHelper
 
   def current_price_of(coin)
     coin['current_price']
-  end
-
-  def insert_pair(h, key, pair, proximity=:before)
-    h.to_a.insert(h.keys.index(key) + (proximity==:after ? 1 : 0), pair.first).to_h
-  end
-  
-  def insert_user_gain_of(coin)
-    coin.store( 'user_price_gain',
-                 percentage_between( current_price_of(coin),
-                 entry_price_of(coin) ) - 100 )
   end
   
   def get_difference( high, low, current )
@@ -125,21 +69,16 @@ module CoinsHelper
     difference = get_difference( high_24h(coin), low_24h(coin), current_price_of(coin) )
   
     coin.store( "vs_24h", difference )
-  end  
 
-  def insert_values_from(coin)
-    coin = market(coin)
-  
-    insert_current_vs_24h_prices_of(coin)
-      
-    insert_user_gain_of(coin) if user_coin_has_entry?(coin)
-  
-    insert_user_price_of(coin)
-  end
+    coin
+  end  
   
   def insert_extra_values_from(user_coins, arr = [])
     user_coins.each do |coin|
-      coin = insert_values_from(coin)
+      coin = market(coin)
+      
+      coin = insert_current_vs_24h_prices_of(coin)
+      
       arr << coin
     end
     arr

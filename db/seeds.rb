@@ -9,5 +9,11 @@ puts 'seeding...'
   Coin.create(coin_id: 'cardano')
   Coin.create(coin_id: 'dogecoin')
   Coin.create(coin_id: 'matic-network')
+  Coin.create(coin_id: 'polkadot')
+  Coin.create(coin_id: 'binancecoin')
+  Coin.create(coin_id: 'gala')
+  Coin.create(coin_id: 'near')
+  Coin.create(coin_id: 'terrausd')
+  Coin.create(coin_id: 'sushi')
   
 puts 'seeding done'

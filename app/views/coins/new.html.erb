@@ -2,7 +2,5 @@
   <%= f.label :Coin %> 
   <%= f.input :coin_id, as: :select, collection: @coins, label_method: :first, value_method: :second, label: false %><br>
   
-  <%= f.input :status, as: :hidden, input_html: { :value => @status } %><br>
-  
   <%= f.submit "#{@status} coin".titleize %> 
 <% end %>

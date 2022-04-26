@@ -3,10 +3,5 @@ Rails.application.routes.draw do
   
   root 'home#index'
 
-  post '/coins/trade', to: 'coins#trade', as: 'trade'
-  get '/coins/show_trade', to: 'coins#show_trade', as: 'show_trade'
-
-  resources :coins, only: [:new, :create, :show, :destroy]
-
-  
+  resources :coins, only: [:new, :create, :show, :destroy, :update]
 end

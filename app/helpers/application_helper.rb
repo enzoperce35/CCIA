@@ -11,6 +11,10 @@ module ApplicationHelper
     end
   end
 
+  def is_user_owned?(coin)
+    coin.owned?
+  end
+
   def percentage_between(price_a, price_b)
     ((price_a.to_f / price_b.to_f)  * 100).round(2)
   end
@@ -24,11 +28,15 @@ module ApplicationHelper
   end
 
   def user(coin)
-    Coin.find_by(coin_id: coin['id']) 
+    coin_id = coin.is_a?(String) ? coin : coin['id']
+    
+    Coin.find_by(coin_id: coin_id) 
   end
 
   def market(user_coin)
-    client.markets( user_coin.coin_id, vs_currency: 'php' ).pop
+    coin_id = user_coin.is_a?(String) ? user_coin : user_coin.coin_id
+    
+    client.markets( coin_id, vs_currency: 'php' ).pop
   end
 
   def client
