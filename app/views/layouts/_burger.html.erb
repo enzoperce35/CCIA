@@ -7,9 +7,9 @@
 <div>
   <ul class='nav-menu'>
     <ul class='nav-item'>
-      <% if @coin.present? %>
-        <%= link_to ( is_user_owned?(@coin) ? 'Unmark Coin': 'Mark Coin'), coin_path(@coin), method: 'patch' %><br>
-        <%= link_to 'Delete Coin', coin_path(@coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{@market['name']} ?"} %><br>
+      <% if @selected_coin.present? %>
+        <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coin_path(@selected_coin), method: 'patch' %><br>
+        <%= link_to 'Delete Coin', coin_path(@selected_coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{market(@selected_coin)['name']} ?"} %><br>
       <% end %>
       
       <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
