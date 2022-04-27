@@ -23,7 +23,7 @@
         <td style="margin-bottom: 0%;">
           <div style="font-size: smaller;">
             <img src="<%= coin['image']%>">
-            <%= link_to coin['symbol'], root_path(selected: coin['id']), method: 'get' %>
+            <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
             <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
           </div>
 
