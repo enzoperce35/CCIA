@@ -11,5 +11,11 @@
   };
 </script>
 
-<%= render 'coin_view' %>
-<%= render 'observe_mode' if @observe %>
+<% if @selected_coin.present? %>
+  <%= render 'about_coin' %>
+<% else %>
+  <%= render 'coin_view' %>
+  <%= render 'observe_mode' if @observe %>
+<% end %>
+
+
