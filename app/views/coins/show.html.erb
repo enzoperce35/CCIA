@@ -2,7 +2,10 @@
 <% not_needed_infos = ['image', 'market_cap', 'fully_diluted_valuation', 'ath_date',
                        'ath_change_percentage', 'atl_change_percentage', 'atl_date', 'roi'] %>
 
-<div class="container">
+<div>
+  <div style="float:left; margin-top:4%; margin-left: 5%">
+    <img id= 'show-img' src=<%= selected_coin['image'] %>>
+  </div>
   
   <div style="float:left; position:absolute">
     <% selected_coin.each do | key, val | %>
@@ -15,7 +18,6 @@
             <%= val %>
         </em>
       </p>
-    
     <% end %>
   </div>
 </div>
