@@ -8,13 +8,26 @@
   <ul class='nav-menu'>
     <ul class='nav-item'>
       <% if @selected_coin.present? %>
-        <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coin_path(@selected_coin), method: 'patch' %><br>
-        <%= link_to 'Delete Coin', coin_path(@selected_coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{market(@selected_coin)['name']} ?"} %><br>
+        <div>
+          <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coin_path(@selected_coin), method: 'patch' %>
+        </div>
+
+        <div>
+          <%= link_to 'Delete Coin', coin_path(@selected_coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{market(@selected_coin)['name']} ?"} %>
+        </div>
       <% end %>
       
-      <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
-      <%= link_to 'Observe Mode', root_path(observe: true), method: 'get' %><br>
-      <%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %>
+      <div>
+        <%= link_to 'Add Coin', new_coin_path, method: 'get' %>
+      </div>
+
+      <div>
+        <%= link_to 'Observe Mode', root_path(observe: true), method: 'get' %>
+      </div>
+
+      <div>
+        <%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %>
+      </div>
     </ul>
   </ul>
 </div>

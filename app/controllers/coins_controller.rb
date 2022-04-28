@@ -30,11 +30,9 @@ class CoinsController < ApplicationController
 
   def update
     coin = Coin.find( params[:id] )
-     
-    answer = coin.owned? ? false : true
     
-    coin.update(owned?: answer)
-
+    coin.update(owned?: coin.owned? ? false : true, trade_price: current_price_of( coin ) )
+   
     redirect_to root_path, method: 'get'
   end
 

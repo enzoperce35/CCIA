@@ -15,5 +15,6 @@ puts 'seeding...'
   Coin.create(coin_id: 'near')
   Coin.create(coin_id: 'terrausd')
   Coin.create(coin_id: 'sushi')
+  Coin.create(coin_id: 'jasmycoin')
   
 puts 'seeding done'
