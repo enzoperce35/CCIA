@@ -2,12 +2,12 @@
 <% not_needed_infos = ['image', 'market_cap', 'fully_diluted_valuation', 'ath_date',
                        'ath_change_percentage', 'atl_change_percentage', 'atl_date', 'roi'] %>
 
-<div>
-  <div style="float:left; margin-top:4%; margin-left: 5%">
+<div class='container_row'>
+  <div class='layer1'>
     <img id= 'show-img' src=<%= selected_coin['image'] %>>
   </div>
   
-  <div style="float:left">
+  <div class=layer2>
     <% selected_coin.each do | key, val | %>
       <% next if not_needed_infos.include?(key) %>
       
