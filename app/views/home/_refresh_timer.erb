@@ -1,4 +1,6 @@
-<div style="text-align:right">Prices will refresh in <span id="cnt" style="color:red;">60</span> Seconds</div>
+<% refresh = "\u{1F5D8}".encode('utf-8') %>
+
+<div id='reload' style="text-align:right"><span id="cnt" style="color:red;">60</span></div>
 
 <script>
   var counter = 60;
@@ -21,7 +23,15 @@
   window.setInterval('refresh()', 60000);
   
   function refresh() {
-    window  .location.reload();
+    refresh = document.getElementById('reload')
+
+    refresh.innerHTML = '<%= refresh %>'
+
+    refresh.style.fontSize = 'x-large'
+    
+    refresh.addEventListener('click', function() {
+      window.location.reload();
+    });
   }
 </script>
   
