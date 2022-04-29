@@ -1,9 +1,9 @@
-<% refresh = "\u{1F5D8}".encode('utf-8') %>
+<% refresh = "\u27F3".encode('utf-8') %>
 
-<div id='reload' style="text-align:right"><span id="cnt" style="color:red;">60</span></div>
+<div id='reload' style="text-align:right"><span id="cnt" style="color:red;">80</span></div>
 
 <script>
-  var counter = 60;
+  var counter = 80;
     
   window.setInterval(function () {
     counter--;
@@ -20,7 +20,7 @@
   
     }, 1000);
   
-  window.setInterval('refresh()', 60000);
+  window.setInterval('refresh()', 80000);
   
   function refresh() {
     refresh = document.getElementById('reload')
