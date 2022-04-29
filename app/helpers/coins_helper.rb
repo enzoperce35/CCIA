@@ -1,21 +1,5 @@
 module CoinsHelper
-
-  def selling_grade_of(coin)
-    100 - percentage_between( low_24h(coin), current_price_of(coin) )
-  end
-
-  def buying_grade_of(coin)
-    100 - percentage_between( user(coin).trade_price, current_price_of(coin) )
-  end
-
-  def insert_trading_score_of(coin)
-    score = is_a_buy?(coin) ? buying_grade_of(coin) : selling_grade_of(coin)
-    
-    coin.store('trade_score', score.round(2) )
-
-    coin
-  end
-
+ 
   def sum_price_changes(prices, x = 0)
     prices.each { |p| x += p[1]}
 
@@ -76,6 +60,22 @@ module CoinsHelper
       market( coin )['current_price'].to_f
     end
   end
+
+  def price_gain_of(coin)
+    percentage_between( current_price_of(coin), coin.trade_price ) - 100
+  end
+
+  def insert_price_gain_of(coin)
+    user_coin = user( coin )
+    
+    if user_coin.trade_price.nil?
+      coin.store('price_gain', 'N/A' )
+    else
+      coin.store('price_gain', price_gain_of( user_coin ) )
+    end
+    
+    coin
+  end  
   
   def get_difference( high, low, current )
     range = high - low
@@ -91,7 +91,7 @@ module CoinsHelper
     coin.store( "vs_24h", difference )
 
     coin
-  end  
+  end
   
   def insert_extra_values_from(user_coins, arr = [])
     user_coins.each do |coin|
@@ -99,7 +99,7 @@ module CoinsHelper
       
       coin = insert_current_vs_24h_prices_of(coin)
       
-      coin = insert_trading_score_of(coin)
+      coin = insert_price_gain_of(coin)
       
       arr << coin
     end

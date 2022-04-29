@@ -3,6 +3,7 @@ class HomeController < ApplicationController
   
   def index
     @observe = params[:observe]
+    
     @coins = helpers.insert_extra_values_from( Coin.all )
   end
 end
