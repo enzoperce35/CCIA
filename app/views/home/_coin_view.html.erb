@@ -6,7 +6,6 @@
   <thead>
     <tr>
       <th>Coin</th>
-      <th>Gain</th>
       <th>Trend</th>
     </tr>
   </thead>
@@ -28,20 +27,16 @@
             <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
           </div>
 
-          <hr style="width:85px; margin-top:0%; margin-bottom:0%">
+          <hr style="width:120px; margin-top:0%; margin-bottom:0%">
 
           <div style="font-size: smaller; margin-left:5px">
             <%= "\u{20B1}".encode('utf-8') + current_price_of(coin).to_s %>
-          </div>
-        </td>
-
-        <td>
-          <div style="margin-top: 7px;">
+            
             <% price_gain = coin['price_gain'] %>
             
             <% unless price_gain == 'N/A' %>
               <% color = "color:" + ( price_gain >= 0 ? "green" : "red" ) %>
-              
+              /
               <em style=<%= color %>>
                 <%= price_gain.abs.round(2) %>
               </em>
