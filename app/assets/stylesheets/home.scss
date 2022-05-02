@@ -8,61 +8,68 @@ img {
  }
 
 .my-grid {
-  border-radius: 2px;
   width: 150px;
   margin-top: 3px;
 }
   
 .col-1-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
   
 .col-2-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
   
 .col-3-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
   
 .col-4-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
 
 .col-5-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
   
 .col-6-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
     
 .col-7-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
     
 .col-8-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
     
 .col-9-10 {
+  border-left: 0.05px solid white;
   height: 10px;
   float: left;
 }
     
 .col-10-10 {
+  border-left: 0.05px solid white;
+  border-right: 0.05px solid white;
   height: 10px;
-  float: left;;
+  float: left;
 }
-    
-.my-grid:after {
-  clear:both;
-}
+ 
