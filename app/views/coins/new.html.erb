@@ -1,6 +1,6 @@
 <%= simple_form_for @coin do |f| %>
-  <%= f.label :Coin %> 
-  <%= f.input :coin_id, as: :select, collection: @coins, label_method: :first, value_method: :second, label: false %><br>
+  <%= f.label 'Select Coin' %> 
+  <%= f.input :coin_id, as: :select, collection: @coins, label_method: :first, value_method: :second, label: false, input_html: { class: "form-control", required: true } %><br>
   
-  <%= f.submit "#{@status} coin".titleize %> 
+  <%= f.submit 'Add Coin' %> 
 <% end %>

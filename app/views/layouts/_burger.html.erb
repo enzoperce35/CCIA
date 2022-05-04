@@ -17,6 +17,12 @@
         </div>
       <% end %>
       
+      <% unless no_user_coin_yet? %>
+        <div>
+          <%= link_to 'Trade Coins', trade_path, method: 'get' %>
+        </div>
+      <% end %>
+      
       <div>
         <%= link_to 'Add Coin', new_coin_path, method: 'get' %>
       </div>

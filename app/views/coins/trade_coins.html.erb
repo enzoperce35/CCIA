@@ -1,0 +1,9 @@
+<%= simple_form_for :coins, url: coins_make_trade_path, method: 'post' do |f| %>
+  <%= f.label 'Trade' %>
+  <%= f.input :buy, as: :select, label: false, collection: @user_coins, label_method: :coin_id, value_method: :coin_id, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label 'To' %>
+  <%= f.input :sell, as: :select, label: false, collection: @observed_coins, label_method: :coin_id, value_method: :coin_id, input_html: { class: "form-control", required: true } %><br>
+
+  <%= f.submit 'Trade Coins' %>
+<% end %>

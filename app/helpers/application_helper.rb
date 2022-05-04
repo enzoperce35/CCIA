@@ -11,6 +11,10 @@ module ApplicationHelper
     end
   end
 
+  def no_user_coin_yet?
+    Coin.where(owned?: true).count.zero?
+  end
+
   def is_user_owned?(coin)
     coin.owned?
   end

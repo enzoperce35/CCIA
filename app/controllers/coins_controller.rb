@@ -30,13 +30,31 @@ class CoinsController < ApplicationController
 
   def update
     coin = Coin.find( params[:id] )
-    
-    coin.update(owned?: coin.owned? ? false : true, trade_price: current_price_of( coin ) )
-   
+  
+    update_user(coin)
+      
     redirect_to root_path, method: 'get'
   end
 
+  def make_trade
+    buy = Coin.find_by( coin_id: params[:coins][:buy] ) 
+    sell = Coin.find_by( coin_id: params[:coins][:sell] )
+
+    [buy, sell].each { |coin| update_user( coin ) }
+
+    redirect_to root_path, method: 'get'
+  end
+
+  def trade_coins
+    @user_coins = Coin.where(owned?: true)
+    @observed_coins = Coin.where(owned?: false)
+  end
+
   private
+
+  def update_user(coin)
+    coin.update( owned?: coin.owned? ? false : true, trade_price: current_price_of( coin ) )
+  end
 
   def market(coin)
     helpers.market(coin)
