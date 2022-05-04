@@ -6,7 +6,7 @@ module CoinsHelper
     x
   end
 
-  def analyze_change_in(coin, trends, arr = [])
+  def analyze_change_in( trends, arr = [] )
     trends.each_with_index do |trend, index|
       next if index == 0
     
@@ -29,40 +29,18 @@ module CoinsHelper
     arr
   end
   
-  def insert_price_trends(coins)
-    coins.each do |coin|
-      prices = client.minutely_historical_price(coin['id'])
+  def insert_price_trends_of(coin)
+    prices = client.minutely_historical_price(coin['id'])
     
-      trends = get_last_ten_changes_of(prices)
+    trends = get_last_ten_changes_of(prices)
       
-      coin.store('trend', analyze_change_in(coin, trends) )
-    end
-    coins
-  end
-
-  def is_a_buy?(coin)
-    user(coin).trade_price.present?
-  end
-
-  def low_24h(coin)
-    coin['low_24h']
-  end
-  
-  def high_24h(coin)
-    coin['high_24h']
-  end
-
-  def current_price_of(coin)
-    case coin
-    when Hash
-      coin['current_price'].to_f
-    else
-      market( coin )['current_price'].to_f
-    end
+    coin.store('trend', analyze_change_in( trends ) )
+   
+    coin
   end
 
   def price_gain_of(coin)
-    percentage_between( current_price_of(coin), coin.trade_price ) - 100
+    percentage_between( current_price_of(coin), user( coin ).trade_price ) - 100
   end
 
   def insert_price_gain_of(coin)
@@ -71,10 +49,8 @@ module CoinsHelper
     if user_coin.trade_price.nil?
       coin.store('price_gain', 'N/A' )
     else
-      coin.store('price_gain', price_gain_of( user_coin ) )
+      coin.store('price_gain', price_gain_of( coin ) )
     end
-    
-    coin
   end  
   
   def get_difference( high, low, current )
@@ -89,20 +65,17 @@ module CoinsHelper
     difference = get_difference( high_24h(coin), low_24h(coin), current_price_of(coin) )
   
     coin.store( "vs_24h", difference )
-
-    coin
   end
   
-  def insert_extra_values_from(user_coins, arr = [])
-    user_coins.each do |coin|
-      coin = market(coin)
+  def insert_extra_values_from(coins)
+    coins = client.markets( coins, vs_currency: 'php' )
+    
+    coins.map do |coin|
+      insert_current_vs_24h_prices_of(coin)
       
-      coin = insert_current_vs_24h_prices_of(coin)
-      
-      coin = insert_price_gain_of(coin)
-      
-      arr << coin
+      insert_price_gain_of(coin)
+
+      insert_price_trends_of(coin)
     end
-    arr
   end
 end

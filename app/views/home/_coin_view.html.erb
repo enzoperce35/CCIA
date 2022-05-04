@@ -1,5 +1,4 @@
 <% all_coins = @coins.sort_by { |k| k['vs_24h'] }.reverse %>
-<% all_coins = insert_price_trends(all_coins) %>
 
 <%= render 'refresh_timer' unless @observe %>
 

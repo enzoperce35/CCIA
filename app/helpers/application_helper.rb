@@ -11,6 +11,23 @@ module ApplicationHelper
     end
   end
 
+  def current_price_of(coin)
+    case coin
+    when Hash
+      coin['current_price'].to_f
+    else
+      market( coin )['current_price'].to_f
+    end
+  end
+
+  def low_24h(coin)
+    coin['low_24h']
+  end
+  
+  def high_24h(coin)
+    coin['high_24h']
+  end
+
   def no_user_coin_yet?
     Coin.where(owned?: true).count.zero?
   end

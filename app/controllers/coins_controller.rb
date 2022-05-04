@@ -16,6 +16,8 @@ class CoinsController < ApplicationController
 
   def show
     @selected_coin = Coin.find( params[:id] )
+
+    @user_coin = market( @selected_coin )
   end
 
   def destroy
