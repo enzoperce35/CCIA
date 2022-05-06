@@ -20,7 +20,7 @@
     <% index = index.to_s %>
     
     <tbody>
-      <tr>
+      <tr id="<%= coin['id'] %>">
         <td style="margin-bottom: 0%;">
           <div style="font-size: smaller;">
             <img src="<%= coin['image']%>">
@@ -35,9 +35,9 @@
           </div>
         </td>
 
-        <td>
+        <td style="padding:0%">
           <div class="parent-container d-flex">
-            <div class="container">
+            <div class="container" style="margin-top:10px;">
               <div class="progress" style="width: 150px; margin-top:7px">
                 <div id=<%= id_target %> class="progress-bar <%= 'bg-info' %>" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
@@ -59,7 +59,7 @@
               </div>
             </div>
 
-            <div style="margin-top: 11px; text-align:left">
+            <div>
               <% price_gain = coin['price_gain'] %>
               
               <% unless price_gain == 'N/A' %>

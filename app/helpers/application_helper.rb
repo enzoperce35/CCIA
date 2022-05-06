@@ -11,6 +11,16 @@ module ApplicationHelper
     end
   end
 
+  def find_focus
+    user_coins = Coin.where(owned?: true)
+
+    return Coin.first.coin_id if user_coins.count.zero?
+
+    middle_coin = (user_coins.count / 2).to_i
+
+    user_coins[middle_coin].coin_id
+  end
+
   def current_price_of(coin)
     case coin
     when Hash

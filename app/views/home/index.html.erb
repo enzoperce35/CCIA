@@ -13,3 +13,7 @@
 
 <%= render 'coin_view' %>
 <%= render 'observe_mode' if @observe %>
+
+<script>
+  document.getElementById('<%= find_focus %>').scrollIntoView( { block: "center" } );
+</script>
