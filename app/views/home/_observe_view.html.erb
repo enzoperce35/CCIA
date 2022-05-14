@@ -57,7 +57,7 @@
               </div>
             </div>
 
-            <div>
+            <div style="margin-top: 7px;">
               <div class='obs-data'>
                 <% price_gain = coin['price_gain'] %>
               
@@ -74,7 +74,7 @@
 
               <hr style="margin-top:0px; margin-bottom:0px">
 
-              <div class='obs-data'>
+              <div style="font-size: small; text-align: right">
                 <% holding_price = user_coin.on_hold.nil? ? 'N/A' : (user_coin.on_hold * current_price_of(coin)).round(2).to_s %>
                 <%= holding_price == 'N/A' ? "\u{20B1}".encode('utf-8') + '0.00' : "\u{20B1}".encode('utf-8') + holding_price %>
               </div>
@@ -82,7 +82,12 @@
               <hr style="margin-top:0px; margin-bottom:0px">
 
               <div class='obs-data'>
-                <%= ( percentage_between( coin['current_price'], user_coin.observed_price ) - 100 ).round(2) %>
+                <% gain = ( percentage_between( coin['current_price'], user_coin.observed_price ) - 100 ) %>
+                <% color = "color:" + ( gain >= 0 ? "green" : "red" ) %>
+                
+                 <em style=<%= color %>>
+                    <%= gain.round(2) %>
+                  </em>
               </div>
             </div>
           </div>
