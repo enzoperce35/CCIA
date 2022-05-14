@@ -1,7 +1,7 @@
-<div style="text-align:right">Prices will refresh in <span id="cnt" style="color:red;">80</span> Seconds</div>
+<%= render 'observe_view' %>
 
 <script>
-  var counter = 80;
+  var counter = "<%= @timer %>";
     
   window.setInterval(function () {
     counter--;
@@ -18,7 +18,7 @@
   
     }, 1000);
   
-  window.setInterval('refresh()', 80000);
+  window.setInterval('refresh()', counter * 1000);
   
   function refresh() {
     window  .location.reload();

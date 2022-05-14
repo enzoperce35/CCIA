@@ -68,6 +68,8 @@ module CoinsHelper
   end
   
   def insert_extra_values_from(coins)
+    return 'No Coin To Observe' if coins.blank?
+    
     coins = client.markets( coins, vs_currency: 'php' )
     
     coins.map do |coin|

@@ -1,7 +1,5 @@
 <% all_coins = @coins.sort_by { |k| k['vs_24h'] }.reverse %>
 
-<%= render 'refresh_timer' unless @observe %>
-
 <table class = 'table'>
   
   <thead>
@@ -25,7 +23,6 @@
           <div style="font-size: smaller;">
             <img src="<%= coin['image']%>">
             <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-            <%= "\u{1F50E}".encode('utf-8') if user_coin.observed? %>
             <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
           </div>
 
@@ -78,7 +75,8 @@
               <hr style="margin-top:0px; margin-bottom:0px">
 
               <div class='obs-data'>
-                <em style="font-weight:bold; color:royalblue"><%= index.to_i + 1 %></em>
+                <% holding_price = user_coin.on_hold.nil? ? 'N/A' : (user_coin.on_hold * current_price_of(coin)).round(2).to_s %>
+                <%= holding_price == 'N/A' ? "\u{20B1}".encode('utf-8') + '0.00' : "\u{20B1}".encode('utf-8') + holding_price %>
               </div>
 
               <hr style="margin-top:0px; margin-bottom:0px">

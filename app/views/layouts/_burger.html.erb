@@ -9,26 +9,52 @@
     <ul class='nav-item'>
       <% if @selected_coin.present? %>
         <div>
-          <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coin_path(@selected_coin), method: 'patch' %>
+          <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coins_edit_user_coin_path(selected: @selected_coin.coin_id ), method: 'edit' %>
         </div>
 
+        <div>
+          <% action = @selected_coin.on_hold.nil? ? 'Add' : 'Remove' %>
+          
+          <%= link_to action + ' Holdings', coins_holdings_path( selected: @selected_coin.coin_id ), method: 'get' %>
+        </div>
+
+        <div>
+          <% action = @selected_coin.observed? ? 'Stop' : 'Start' %>
+          <%= link_to action + ' Observing', home_observe_path( coin_to_observe: @selected_coin ), method: 'post' %>
+        </div>
+        
         <div>
           <%= link_to 'Delete Coin', coin_path(@selected_coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{market(@selected_coin)['name']} ?"} %>
         </div>
       <% end %>
       
-      <% unless no_user_coin_yet? %>
-        <div>
-          <%= link_to 'Trade Coins', trade_path, method: 'get' %>
-        </div>
-      <% end %>
-      
       <div>
-        <%= link_to 'Add Coin', new_coin_path, method: 'get' %>
+        <% unless @selected_coin.present? %>
+          <% unless no_user_coin_yet? %>
+            <div>
+              <%= link_to 'Trade Coins', trade_path, method: 'get' %>
+            </div>
+          <% end %>
+      
+          <% unless @observe %>
+            <div>
+              <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
+              <%= link_to 'Observe Mode', root_path(observe: true), method: 'get' %><br>
+            </div>
+          <% end %>
+          
+          <%= link_to 'Reset Gain Data', coins_gain_reset_path(coins: @coin_ids), method: 'post', data: { confirm: 'Are you sure you want to reset current gain data?'} %>
+        <% end %>
       </div>
 
       <div>
-        <%= link_to 'Observe Mode', root_path(observe: true), method: 'get' %>
+        <% if @observe %>
+          <% if @timer == 1000 %>
+            <%= link_to 'Start Timer', root_path(observe: true), method: 'get' %><br>
+          <% else %>
+            <%= link_to 'Stop Timer', root_path(observe: true, stop_timer: true), method: 'get' %><br>
+          <% end %>
+        <% end %>
       </div>
 
       <div>

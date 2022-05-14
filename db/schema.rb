@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_04_212353) do
+ActiveRecord::Schema.define(version: 2022_05_11_203457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,9 @@ ActiveRecord::Schema.define(version: 2022_04_04_212353) do
     t.float "trade_price"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "observed?", default: false
+    t.float "observed_price"
+    t.float "on_hold"
   end
 
   create_table "users", force: :cascade do |t|

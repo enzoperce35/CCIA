@@ -30,12 +30,31 @@ class CoinsController < ApplicationController
     end
   end
 
+  def edit_user_coin
+    coin = Coin.find_by(coin_id: params[:selected])
+
+    update_user(coin)
+
+    redirect_to root_path, method: 'get'
+  end
+
+  def holdings
+    @coin = Coin.find_by( coin_id: params[:selected] )
+  end
+
   def update
     coin = Coin.find( params[:id] )
-  
-    update_user(coin)
-      
-    redirect_to root_path, method: 'get'
+    selected = params[:selected]
+
+    if coin.update( coin_params )
+      if selected.present?
+        redirect_to coin_path(coin), notice: 'coin updated'
+      else
+        redirect_to root_path, notice: 'coin updated'
+      end
+    else
+      redirect_back(fallback_location: root_path, notice: 'coin update failed')
+    end
   end
 
   def make_trade
@@ -50,6 +69,18 @@ class CoinsController < ApplicationController
   def trade_coins
     @user_coins = Coin.where(owned?: true)
     @observed_coins = Coin.where(owned?: false)
+  end
+
+  def gain_reset
+    coins = params[:coins].split(', ')
+
+    coins.each do |coin|
+      sel_coin = Coin.find_by(coin_id: coin)
+      
+      sel_coin.update(observed_price: helpers.current_price_of( coin ) )
+    end
+
+    redirect_back(fallback_location: root_path)
   end
 
   private
@@ -67,6 +98,6 @@ class CoinsController < ApplicationController
   end
 
   def coin_params
-    params.require(:coin).permit( :coin_id, :owned? )
+    params.require(:coin).permit( :coin_id, :owned?, :observed?, :observed_price, :on_hold )
   end
 end
