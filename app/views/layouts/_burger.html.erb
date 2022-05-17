@@ -58,7 +58,11 @@
       </div>
 
       <div>
-        <%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %>
+        <%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
+      </div>
+
+      <div>
+        <%= link_to 'Reset Coins', coins_major_reset_path, method: 'post' %>
       </div>
     </ul>
   </ul>

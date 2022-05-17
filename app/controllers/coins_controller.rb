@@ -8,6 +8,8 @@ class CoinsController < ApplicationController
     coin = Coin.create(coin_params)
     
     if coin.save
+      set_coin_price( coin )
+      
       redirect_to root_path, notice: "new coin saved!"
     else
       redirect_back(fallback_location: root_path, notice: "coin not saved")
@@ -57,6 +59,12 @@ class CoinsController < ApplicationController
     end
   end
 
+  def major_reset
+    Coin.all.each { |coin| set_coin_price( coin ) }
+
+    redirect_to root_path
+  end
+
   def make_trade
     buy = Coin.find_by( coin_id: params[:coins][:buy] ) 
     sell = Coin.find_by( coin_id: params[:coins][:sell] )
@@ -84,6 +92,12 @@ class CoinsController < ApplicationController
   end
 
   private
+
+  def set_coin_price( coin )
+    price = current_price_of( coin )
+    
+    coin.update( owned?: false, trade_price: price, observed_price: price )
+  end
 
   def update_user(coin)
     coin.update( owned?: coin.owned? ? false : true, trade_price: current_price_of( coin ) )
