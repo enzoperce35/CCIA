@@ -11,6 +11,7 @@ class HomeController < ApplicationController
     @all = params[:all]
     
     change_observation_status_of( params[:coin_to_observe] ) if params[:coin_to_observe].present?
+    reset_observed( params[:unobserve] ) if params[:unobserve].present?
     
     @coin_ids =
     if @all
@@ -28,6 +29,18 @@ class HomeController < ApplicationController
 
   def set_timer_for( coins )
     coins.count * 4
+  end
+
+  def reset_observed( coins )
+    coins = coins.split(', ')
+
+    coins.each do |coin|
+      coin = Coin.find_by(coin_id: coin)
+
+      next if coin.owned?
+
+      coin.update(observed?: false)
+    end
   end
 
   def change_observation_status_of( coin )
