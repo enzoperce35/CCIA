@@ -8,23 +8,27 @@ class HomeController < ApplicationController
   end
   
   def index
-    @observe = params[:observe]
+    @all = params[:all]
     
     change_observation_status_of( params[:coin_to_observe] ) if params[:coin_to_observe].present?
     
     @coin_ids =
-    if @observe
-      Coin.where(observed?: true).pluck('coin_id').join(', ')
-    else
+    if @all
       Coin.pluck('coin_id').join(', ')
+    else
+      Coin.where(observed?: true).pluck('coin_id').join(', ')
     end
     
     @coins = helpers.insert_extra_values_from( @coin_ids )
     
-    @timer = params[:stop_timer].present? ? 1000 : @coins.count * 4
+    @timer = params[:auto_timer].present? ? set_timer_for( @coins ) : 1000
   end
 
   private
+
+  def set_timer_for( coins )
+    coins.count * 4
+  end
 
   def change_observation_status_of( coin )
     coin = Coin.find_by( id: coin )

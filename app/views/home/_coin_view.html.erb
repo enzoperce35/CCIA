@@ -1,7 +1,5 @@
 <% all_coins = @coins.sort_by { |k| k['vs_24h'] }.reverse %>
 
-<%= render 'refresh_timer' unless @observe %>
-
 <table class = 'table'>
   
   <thead>
@@ -118,3 +116,5 @@
     </script>
   <% end %>
 </table>
+
+<%= render 'refresh_timer' unless @observe %>

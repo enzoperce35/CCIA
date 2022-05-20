@@ -11,14 +11,18 @@
   };
 </script>
 
-<% if @observe %>
+<div style="float: right;">
+  <%= link_to "\u{1F4C8}".encode('utf-8'), coins_gain_reset_path(coins: @coin_ids), method: 'post', data: { confirm: 'Are you sure you want to reset current gain data?'}  %>
+</div>
+
+<% if @all %>
+  <%= render 'coin_view' %>
+<% else %>
   <% if @coins.class == String %>
     <h3><%= @coins %></h3>
   <% else %>
     <%= render 'observe_mode' %>
   <% end %>
-<% else %>
-  <%= render 'coin_view' %>
 <% end %>
 
 <script>

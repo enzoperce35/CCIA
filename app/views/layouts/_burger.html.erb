@@ -35,30 +35,15 @@
               <%= link_to 'Trade Coins', trade_path, method: 'get' %>
             </div>
           <% end %>
-      
-          <% unless @observe %>
-            <div>
-              <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
-              <%= link_to 'Observe Mode', root_path(observe: true), method: 'get' %><br>
-            </div>
-          <% end %>
-          
-          <%= link_to 'Reset Gain Data', coins_gain_reset_path(coins: @coin_ids), method: 'post', data: { confirm: 'Are you sure you want to reset current gain data?'} %>
         <% end %>
       </div>
 
       <div>
-        <% if @observe %>
-          <% if @timer == 1000 %>
-            <%= link_to 'Start Timer', root_path(observe: true), method: 'get' %><br>
-          <% else %>
-            <%= link_to 'Stop Timer', root_path(observe: true, stop_timer: true), method: 'get' %><br>
-          <% end %>
-        <% end %>
+        <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
       </div>
 
       <div>
-        <%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
+        <br><br><%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
       </div>
 
       <div>

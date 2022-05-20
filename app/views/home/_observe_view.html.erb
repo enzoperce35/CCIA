@@ -1,5 +1,13 @@
 <% all_coins = @coins.sort_by { |k| k['vs_24h'] }.reverse %>
 
+<div style="float: right;">
+  <% if @timer == 1000 %>
+    <%= link_to "\u{1F13C}".encode('utf-8'), root_path(auto_timer: true), method: 'get' %>&nbsp&nbsp&nbsp
+  <% else %>
+    <%= link_to "\u{1F130}", root_path, method: 'get' %>&nbsp&nbsp&nbsp
+  <% end %>
+</div>
+
 <table class = 'table'>
   
   <thead>
@@ -75,7 +83,7 @@
               <hr style="margin-top:0px; margin-bottom:0px">
 
               <div style="font-size: small; text-align: right">
-                <% holding_price = user_coin.on_hold.nil? ? 'N/A' : (user_coin.on_hold * current_price_of(coin)).round(2).to_s %>
+                <% holding_price = user_coin.on_hold.nil? ? 'N/A' : ( user_coin.on_hold * current_price_of( coin ) ).round(2).to_s %>
                 <%= holding_price == 'N/A' ? "\u{20B1}".encode('utf-8') + '0.00' : "\u{20B1}".encode('utf-8') + holding_price %>
               </div>
 
