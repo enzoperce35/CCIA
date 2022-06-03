@@ -10,8 +10,10 @@
   </thead>
   
   <% all_coins.each_with_index do |coin, index| %>
-    <% user_coin = user(coin) %>
-    
+    <% user_coin = user( coin ) %>
+    <% price_gain = coin['price_gain'] %>
+    <% trade_ready = trade_ready?( user_coin, price_gain ) %>
+
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
     <% data = status.to_s + '%' %>
@@ -19,18 +21,26 @@
     
     <tbody>
       <tr id="<%= coin['id'] %>">
-        <td style="margin-bottom: 0%;">
-          <div style="font-size: smaller;">
-            <img src="<%= coin['image']%>">
-            <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-            <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
-          </div>
+        <td style="margin-bottom: 0%; font-size: smaller;">
+          <% if trade_ready %>
+            <div>
+              <div style="font-size: smaller; margin-top: 5px">
+                <%= link_to coin['id'].titleize, root_path( trade_coin: coin['id'] ), :class=> "btn btn-dark btn-sm", :method => :get %>
+              </div>
+            </div>
+          <% else %>
+            <div style="font-size: smaller;">
+              <img src=<%= coin['image']%>>
+              <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
+              <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
+            </div>
 
-          <hr style="width:85px; margin-top:0%; margin-bottom:0%">
+            <hr style="width:85px; margin-top:0%; margin-bottom:0%">
 
-          <div style="font-size: smaller; margin-left:5px">
-            <%= "\u{20B1}".encode('utf-8') + current_price_of(coin).to_s %>
-          </div>
+            <div style="font-size: smaller; margin-left:5px">
+              <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
+            </div>
+          <% end %>
         </td>
 
         <td style="padding:0%">
@@ -59,8 +69,6 @@
 
             <div style="margin-top: 7px;">
               <div class='obs-data'>
-                <% price_gain = coin['price_gain'] %>
-              
                 <% if price_gain == 'N/A' %>
                   <%= price_gain %>
                 <% else %>
@@ -84,7 +92,7 @@
               <div class='obs-data'>
                 <% gain = ( percentage_between( coin['current_price'], user_coin.observed_price ) - 100 ) %>
                 <% color = "color:" + ( gain >= 0 ? "green" : "red" ) %>
-                
+
                  <em style=<%= color %>>
                     <%= gain.round(2) %>
                   </em>

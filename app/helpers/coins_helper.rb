@@ -39,8 +39,8 @@ module CoinsHelper
     coin
   end
 
-  def price_gain_of(coin)
-    percentage_between( current_price_of(coin), user( coin ).trade_price ) - 100
+  def price_gain_of( user_coin )
+    percentage_between( current_price_of( user_coin ), user_coin.trade_price ) - 100
   end
 
   def insert_price_gain_of(coin)
@@ -49,7 +49,7 @@ module CoinsHelper
     if user_coin.trade_price.nil?
       coin.store('price_gain', 'N/A' )
     else
-      coin.store('price_gain', price_gain_of( coin ) )
+      coin.store('price_gain', price_gain_of( user_coin ) )
     end
   end  
   
@@ -67,7 +67,7 @@ module CoinsHelper
     coin.store( "vs_24h", difference )
   end
   
-  def insert_extra_values_from(coins)
+  def insert_extra_values_from( coins )
     return 'No Coin To Observe' if coins.blank?
     
     coins = client.markets( coins, vs_currency: 'php' )

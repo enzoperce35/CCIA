@@ -1,14 +1,36 @@
+class Numeric
+  def percent_of(n)
+    self.to_f * n.to_f / 100.0
+  end
+end
+
 module ApplicationHelper
   def scientific_notation?(number)  #inactive
     number.to_s.include?('-')
   end
   
-  def humanize_price(number)  #inactive
+  def humanize_price(number)
     if scientific_notation?(number)
       "%.8f" % number
     else
       number
     end
+  end
+
+  def generate_margins( coin )
+    coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
+
+    trade_price = coin.usd_trade_price
+    
+    [ humanize_price( 105.percent_of( trade_price ) ), humanize_price( 90.percent_of( trade_price ) ) ]
+  end
+
+  def trade_margin_is_below( price_gain )
+    !price_gain.between?(-2, 0.1)
+  end
+
+  def trade_ready?( user_coin, price_gain)
+    is_user_owned?( user_coin ) && trade_margin_is_below( price_gain )
   end
 
   def find_focus
@@ -21,12 +43,12 @@ module ApplicationHelper
     user_coins[middle_coin].coin_id
   end
 
-  def current_price_of(coin)
+  def current_price_of(coin, currency = 'php' )
     case coin
     when Hash
       coin['current_price'].to_f
     else
-      market( coin )['current_price'].to_f
+      market( coin, currency )['current_price'].to_f
     end
   end
 
@@ -64,10 +86,10 @@ module ApplicationHelper
     Coin.find_by(coin_id: coin_id) 
   end
 
-  def market(user_coin)
+  def market( user_coin, currency = 'php' )
     coin_id = user_coin.is_a?(String) ? user_coin : user_coin.coin_id
     
-    client.markets( coin_id, vs_currency: 'php' ).pop
+    client.markets( coin_id, vs_currency: currency ).pop
   end
 
   def client

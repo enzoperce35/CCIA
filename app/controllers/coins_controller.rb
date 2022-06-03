@@ -66,17 +66,14 @@ class CoinsController < ApplicationController
   end
 
   def make_trade
-    buy = Coin.find_by( coin_id: params[:coins][:buy] ) 
-    sell = Coin.find_by( coin_id: params[:coins][:sell] )
+    buy = params[:buy]
+    sell = params[:sell]
 
-    [buy, sell].each { |coin| update_user( coin ) }
+    [ buy, sell ].each { |coin| update_user( Coin.find_by( coin_id: coin ) ) }
 
-    redirect_to root_path, method: 'get'
-  end
+    high, low = helpers.generate_margins( buy )
 
-  def trade_coins
-    @user_coins = Coin.where(owned?: true)
-    @observed_coins = Coin.where(owned?: false)
+    redirect_to root_path, method: 'get', notice: "trade successful!, set #{ buy } trade margin to: #{ high }(high), #{ low }(low). " 
   end
 
   def gain_reset
@@ -94,21 +91,17 @@ class CoinsController < ApplicationController
   private
 
   def set_coin_price( coin )
-    price = current_price_of( coin )
+    price = helpers.current_price_of( coin )
     
     coin.update( owned?: false, trade_price: price, observed_price: price )
   end
 
   def update_user(coin)
-    coin.update( owned?: coin.owned? ? false : true, trade_price: current_price_of( coin ) )
+    coin.update( owned?: coin.owned? ? false : true, trade_price: helpers.current_price_of( coin ), usd_trade_price: helpers.current_price_of( coin, 'usd' ) )
   end
 
   def market(coin)
     helpers.market(coin)
-  end
-
-  def current_price_of( market_coin )
-    helpers.current_price_of( market_coin )
   end
 
   def coin_params

@@ -8,35 +8,34 @@
   <ul class='nav-menu'>
     <ul class='nav-item'>
       <% if @selected_coin.present? %>
+        <% if is_user_owned?( @selected_coin ) %>
+          <div>
+            <% high, low = generate_margins( @selected_coin ) %>
+            <%= "rise margin: #{ high }, drop margin: #{low}" %>
+          </div>
+        <% end %>
+        
         <div>
           <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coins_edit_user_coin_path(selected: @selected_coin.coin_id ), method: 'edit' %>
         </div>
 
         <div>
-          <% action = @selected_coin.on_hold.nil? ? 'Add' : 'Remove' %>
+          <% action = @selected_coin.on_hold.nil? ? 'Add' : 'Edit' %>
           
           <%= link_to action + ' Holdings', coins_holdings_path( selected: @selected_coin.coin_id ), method: 'get' %>
         </div>
 
-        <div>
-          <% action = @selected_coin.observed? ? 'Stop' : 'Start' %>
-          <%= link_to action + ' Observing', home_observe_path( coin_to_observe: @selected_coin ), method: 'post' %>
-        </div>
+        <% if !is_user_owned?( @selected_coin ) %>
+          <div>
+            <% action = @selected_coin.observed? ? 'Stop' : 'Start' %>
+            <%= link_to action + ' Observing', home_observe_path( coin_to_observe: @selected_coin ), method: 'post' %>
+          </div>
+        <% end %>
         
         <div>
           <%= link_to 'Delete Coin', coin_path(@selected_coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{market(@selected_coin)['name']} ?"} %>
         </div>
       <% end %>
-      
-      <div>
-        <% unless @selected_coin.present? %>
-          <% unless no_user_coin_yet? %>
-            <div>
-              <%= link_to 'Trade Coins', trade_path, method: 'get' %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
 
       <div>
         <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
@@ -52,9 +51,11 @@
         <br><br><%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
       </div>
 
-      <div>
-        <!--<%= link_to 'Reset Coins', coins_major_reset_path, method: 'post' %>-->
-      </div>
+      <% if @all %>
+        <div>
+          <%= link_to 'Reset Gain Data', coins_major_reset_path, method: 'post', data: { confirm: 'Are you sure you want to wipe out coin data?'} %>
+        </div>
+      <% end %>
     </ul>
   </ul>
 </div>

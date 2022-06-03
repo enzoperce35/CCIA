@@ -12,11 +12,13 @@
 </script>
 
 <div style="float: right;">
-  <%= link_to "\u{1F4C8}".encode('utf-8'), coins_gain_reset_path(coins: @coin_ids), method: 'post', data: { confirm: 'Are you sure you want to reset current gain data?'}  %>
+  <%= link_to "\u{1F4C8}".encode('utf-8'), coins_gain_reset_path(coins: @coin_ids), method: 'post', data: { confirm: 'Are you sure you want to reset current observation data?'}  %>
 </div>
 
 <% if @all %>
   <%= render 'coin_view' %>
+<% elsif @trade_coin.present? %>
+  <%= render 'trade_view' %>
 <% else %>
   <% if @coins.class == String %>
     <h3><%= @coins %></h3>
