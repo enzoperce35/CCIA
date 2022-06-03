@@ -42,7 +42,7 @@
       </div>
 
       <div>
-        <% if @all || @selected_coin.present? %>
+        <% if @all || @selected_coin.present? || @trade_coin.present? %>
           <%= link_to 'Observe_Mode', root_path, method: 'get' %>
         <% end %>
       </div>
