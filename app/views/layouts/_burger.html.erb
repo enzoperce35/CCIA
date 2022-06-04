@@ -48,6 +48,12 @@
       </div>
 
       <div>
+        <% unless @trade_coin.present? %>
+          <%= link_to 'Trade Coins', trade_path, method: 'get' %>
+        <% end %>
+      </div>
+
+      <div>
         <br><br><%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
       </div>
 

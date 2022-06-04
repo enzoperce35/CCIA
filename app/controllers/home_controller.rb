@@ -9,7 +9,7 @@ class HomeController < ApplicationController
   
   def index
     @all = params[:all]
-    @trade_coin = params[:trade_coin]
+    @trade_coin = params[:coins][:trade] if params[:coins].present?
     
     change_observation_status_of( params[:coin_to_observe] ) if params[:coin_to_observe].present?
     reset_observed( params[:unobserve] ) if params[:unobserve].present?
@@ -18,7 +18,7 @@ class HomeController < ApplicationController
     if @all
       Coin.pluck( 'coin_id' ).join(', ')
     elsif @trade_coin.present?
-      Coin.where( owned?: false ).pluck( 'coin_id' ).join(', ')
+      Coin.where( owned?: false ).pluck( 'coin_id' ).push( @trade_coin ).join(', ')
     else
       owned = Coin.where( owned?: true ).pluck( 'coin_id' )
       observed = Coin.where( observed?: true ).pluck( 'coin_id' )

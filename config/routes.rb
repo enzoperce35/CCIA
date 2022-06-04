@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   
   root 'home#index'
 
+  get 'coins/trade_coin', as: 'trade'
   post 'coins/make_trade', to: 'coins#make_trade'
   post 'coins/edit_user_coin'
   post 'home/observe'

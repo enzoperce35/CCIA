@@ -25,14 +25,6 @@ module ApplicationHelper
     [ humanize_price( 105.percent_of( trade_price ) ), humanize_price( 90.percent_of( trade_price ) ) ]
   end
 
-  def trade_margin_is_below( price_gain )
-    !price_gain.between?(-2, 0.1)
-  end
-
-  def trade_ready?( user_coin, price_gain)
-    is_user_owned?( user_coin ) && trade_margin_is_below( price_gain )
-  end
-
   def find_focus
     user_coins = Coin.where(owned?: true)
 

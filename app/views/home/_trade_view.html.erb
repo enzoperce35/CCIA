@@ -1,5 +1,5 @@
-<% all_coins = @coins.sort_by { |k| k['vs_24h'] }.slice(0, 10) %>
-<% trade_coin = market( @trade_coin ) %>
+<% coins = filter_trade( @coins, @trade_coin ) %>
+<% trade_coin = coins.first %>
 
 <table class = 'table'>
 
@@ -18,7 +18,7 @@
     </tr>
   </thead>
   
-  <% all_coins.each_with_index do |coin, index| %>
+  <% coins.each_with_index do |coin, index| %>
     <% user_coin = user(coin) %>
     <% price_gain = coin['price_gain'] %>
     
@@ -84,13 +84,15 @@
           </div>
         </td>
 
-        <td> 
-          <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: 'Are you sure you want to trade these coins?' } do %>
-            <button  type="button" class="btn btn-outline-warning btn-sm" style="width:75px; height: 30px; font-size:xx-small; margin-top: 13px">
-              <img src=<%= trade_coin['image'] %> style="width: 21px">
-              =>
-              <img src=<%= coin['image']%> style="width: 21px">
-            </button>
+        <td>
+          <% unless coin['id'] == @trade_coin %>
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: 'Are you sure you want to trade these coins?' } do %>
+              <button  type="button" class="btn btn-outline-warning btn-sm" style="width:75px; height: 30px; font-size:xx-small; margin-top: 13px">
+                <img src=<%= trade_coin['image'] %> style="width: 21px">
+                =>
+                <img src=<%= coin['image']%> style="width: 21px">
+              </button>
+            <% end %>
           <% end %>
         </td>
       </tr>

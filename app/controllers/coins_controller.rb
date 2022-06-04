@@ -65,6 +65,10 @@ class CoinsController < ApplicationController
     redirect_to root_path
   end
 
+  def trade_coin
+    @user_coins = Coin.where(owned?: true)
+  end
+
   def make_trade
     buy = params[:buy]
     sell = params[:sell]
