@@ -37,10 +37,10 @@ module ApplicationHelper
 
   def current_price_of(coin, currency = 'php' )
     case coin
-    when Hash
-      coin['current_price'].to_f
-    else
+    when String
       market( coin, currency )['current_price'].to_f
+    else
+      coin['current_price'].to_f
     end
   end
 

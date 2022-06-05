@@ -11,7 +11,9 @@
   
   <% all_coins.each_with_index do |coin, index| %>
     <% user_coin = user( coin ) %>
-    <% price_gain = coin['price_gain'] %>
+
+    <% long_gain = coin['long_gain'] %>
+    <% short_gain = coin['short_gain'] %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -60,13 +62,13 @@
 
             <div style="margin-top: 7px;">
               <div class='obs-data'>
-                <% if price_gain == 'N/A' %>
-                  <%= price_gain %>
+                <% if long_gain == 'N/A' %>
+                  <%= long_gain %>
                 <% else %>
-                  <% color = "color:" + ( price_gain >= 0 ? "green" : "red" ) %>
+                  <% color = "color:" + ( long_gain >= 0 ? "green" : "red" ) %>
                 
                   <em style=<%= color %>>
-                    <%= price_gain.abs.round(2) %>
+                    <%= long_gain.abs.round(2) %>
                   </em>
                 <% end %>
               </div>
@@ -81,12 +83,15 @@
               <hr style="margin-top:0px; margin-bottom:0px">
 
               <div class='obs-data'>
-                <% gain = ( percentage_between( coin['current_price'], user_coin.observed_price ) - 100 ) %>
-                <% color = "color:" + ( gain >= 0 ? "green" : "red" ) %>
+                <% if short_gain == 'N/A' %>
+                  <%= short_gain %>
+                <% else %>
+                  <% color = "color:" + ( short_gain >= 0 ? "green" : "red" ) %>
 
-                 <em style=<%= color %>>
-                    <%= gain.round(2) %>
+                  <em style=<%= color %>>
+                    <%= short_gain.round(2) %>
                   </em>
+                <% end %>
               </div>
             </div>
           </div>

@@ -59,12 +59,6 @@ class CoinsController < ApplicationController
     end
   end
 
-  def major_reset
-    Coin.all.each { |coin| set_coin_price( coin ) }
-
-    redirect_to root_path
-  end
-
   def trade_coin
     @user_coins = Coin.where(owned?: true)
   end
@@ -81,12 +75,15 @@ class CoinsController < ApplicationController
   end
 
   def gain_reset
-    coins = params[:coins].split(', ')
+    gain = params[:gain]
+    coins = Coin.all
 
     coins.each do |coin|
-      sel_coin = Coin.find_by(coin_id: coin)
-      
-      sel_coin.update(observed_price: helpers.current_price_of( coin ) )
+      if gain == 'short'
+        coin.update( observed_price: helpers.current_price_of( coin.coin_id ) )
+      else
+        reset_all_gain_data_of( coin )
+      end
     end
 
     redirect_back(fallback_location: root_path)
@@ -94,10 +91,10 @@ class CoinsController < ApplicationController
 
   private
 
-  def set_coin_price( coin )
-    price = helpers.current_price_of( coin )
+  def reset_all_gain_data_of( coin )
+    price = helpers.current_price_of( coin.coin_id )
     
-    coin.update( owned?: false, trade_price: price, observed_price: price )
+    coin.update( trade_price: price, observed_price: price )
   end
 
   def update_user(coin)

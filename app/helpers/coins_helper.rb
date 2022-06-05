@@ -7,21 +7,21 @@ module CoinsHelper
   end
 
   def analyze_change_in( trends, arr = [] )
-    trends.each_with_index do |trend, index|
+    trends.each_with_index do | trend, index |
       next if index == 0
     
-      price_a = trends[index-1]
+      price_a = trends[ index-1 ]
     
       price_b = trend
 
       change_indicator = price_a <= price_b ? 'green' : 'red'
     
-      arr << [ change_indicator, (percentage_between( price_b, price_a ) - 100).abs ]
+      arr << [ change_indicator, ( percentage_between( price_b, price_a ) - 100 ).abs ]
     end
     arr
   end
 
-  def get_last_ten_changes_of(prices, arr = [])
+  def get_last_ten_changes_of( prices, arr = [] )
     prices = prices['prices'][-11..-1]
     
     prices.each { |_, price|  arr << price } 
@@ -29,27 +29,26 @@ module CoinsHelper
     arr
   end
   
-  def insert_price_trends_of(coin)
-    prices = client.minutely_historical_price(coin['id'])
-    
-    trends = get_last_ten_changes_of(prices)
+  def insert_price_trends_of( coin, prices )
+    trends = get_last_ten_changes_of( prices )
       
     coin.store('trend', analyze_change_in( trends ) )
    
     coin
   end
 
-  def price_gain_of( user_coin )
-    percentage_between( current_price_of( user_coin ), user_coin.trade_price ) - 100
+  def gain_of( market_coin, user_price )
+    percentage_between( current_price_of( market_coin ), user_price ) - 100
   end
 
-  def insert_price_gain_of(coin)
-    user_coin = user( coin )
+  def insert_coin_gain( market_coin, gain = '' )
+    user_coin = user( market_coin )
+    user_price = gain == 'long' ? user_coin.trade_price : user_coin.observed_price
     
-    if user_coin.trade_price.nil?
-      coin.store('price_gain', 'N/A' )
+    if user_price.nil?
+      market_coin.store( "#{ gain }_gain", 'N/A' )
     else
-      coin.store('price_gain', price_gain_of( user_coin ) )
+      market_coin.store( "#{ gain }_gain", gain_of( market_coin, user_price ) )
     end
   end  
   
@@ -61,23 +60,27 @@ module CoinsHelper
     percentage_between(current, range)
   end
   
-  def insert_current_vs_24h_prices_of(coin)
-    difference = get_difference( high_24h(coin), low_24h(coin), current_price_of(coin) )
+  def insert_current_vs_24h_prices_of( market_coin )
+    difference = get_difference( high_24h( market_coin ), low_24h( market_coin ), current_price_of( market_coin ) )
   
-    coin.store( "vs_24h", difference )
+    market_coin.store( "vs_24h", difference )
   end
   
-  def insert_extra_values_from( coins )
+  def insert_extra_values_from( coins, client_user )
     return 'No Coin To Observe' if coins.blank?
-    
-    coins = client.markets( coins, vs_currency: 'php' )
+
+    coins = client_user.markets( coins, vs_currency: 'php' )
     
     coins.map do |coin|
-      insert_current_vs_24h_prices_of(coin)
+      prices = client_user.minutely_historical_price( coin['id'] )
       
-      insert_price_gain_of(coin)
+      insert_current_vs_24h_prices_of( coin )
+      
+      insert_coin_gain( coin, 'long' )
+      
+      insert_coin_gain( coin, 'short' )
 
-      insert_price_trends_of(coin)
+      insert_price_trends_of( coin, prices )
     end
   end
 end

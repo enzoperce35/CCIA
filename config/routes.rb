@@ -9,7 +9,6 @@ Rails.application.routes.draw do
   post 'home/observe'
   get 'coins/holdings'
   post 'coins/gain_reset'
-  post 'coins/major_reset'
 
   resources :coins, only: [:new, :create, :show, :destroy, :update]
 end

@@ -22,11 +22,12 @@ class HomeController < ApplicationController
     else
       owned = Coin.where( owned?: true ).pluck( 'coin_id' )
       observed = Coin.where( observed?: true ).pluck( 'coin_id' )
-
+      
       ( owned + observed ).join(', ')
     end
     
-    @coins = helpers.insert_extra_values_from( @coin_ids )
+    client = helpers.client
+    @coins = helpers.insert_extra_values_from( @coin_ids, client )
     
     @timer = params[:auto_timer].present? ? set_timer_for( @coins ) : 1000
   end
