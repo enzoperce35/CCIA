@@ -71,7 +71,7 @@ class CoinsController < ApplicationController
 
     high, low = helpers.generate_margins( buy )
 
-    redirect_to root_path, method: 'get', notice: "trade successful!, set #{ buy } trade margin to: #{ high }(high), #{ low }(low). " 
+    redirect_to root_path, method: 'get', notice: "set #{ buy }: high => #{ high } - low => #{ low }" 
   end
 
   def gain_reset
@@ -98,7 +98,7 @@ class CoinsController < ApplicationController
   end
 
   def update_user(coin)
-    coin.update( owned?: coin.owned? ? false : true, trade_price: helpers.current_price_of( coin ), usd_trade_price: helpers.current_price_of( coin, 'usd' ) )
+    coin.update( owned?: coin.owned? ? false : true, trade_price: helpers.current_price_of( coin.coin_id ), usd_trade_price: helpers.current_price_of( coin.coin_id, 'usd' ) )
   end
 
   def market(coin)

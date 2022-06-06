@@ -55,13 +55,23 @@
           
           <hr style="margin-top: 0%; margin-bottom: 0%; width: 70px" >
 
-          <em style="font-size: smaller; margin-top: 0%"><%= coin['id'] %></em>
+          <%= link_to coin_path(user_coin), method: 'get' do %>
+            <em style="font-size: smaller; margin-top: 0%"><%= coin['id'] %></em>
+          <% end %>
 
           <hr style="margin-top: 3px; margin-bottom: 0%; width: 70px" >
 
-          <em style="font-size: 8px;">
-            <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
-          </em>
+          <div>
+           <em style="font-size: 8px;">
+              <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
+           </em>
+
+           <% change_attr = "color:" + ( coin['market_cap_change_percentage_24h'] >= 0 ? "green;" : "red;" ) + "font-size:" + "7px" %>
+           <em style=<%= change_attr %>>
+             <% price_change = coin['market_cap_change_percentage_24h'].round( 2 ) %>
+             <%= price_change > 0 ? '+' + price_change.to_s : price_change %>
+           </em>
+          </div>
         </td>
 
         <td style="padding:0%">

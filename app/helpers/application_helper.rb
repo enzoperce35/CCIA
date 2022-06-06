@@ -1,3 +1,5 @@
+require 'bigdecimal'
+
 class Numeric
   def percent_of(n)
     self.to_f * n.to_f / 100.0
@@ -17,12 +19,21 @@ module ApplicationHelper
     end
   end
 
+  def count_decimals( float )
+    bd = BigDecimal( float.to_s )
+
+    zeros = bd.exponent < 0 ? bd.exponent.abs : 0
+
+    zeros + 4
+  end
+
   def generate_margins( coin )
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
 
     trade_price = coin.usd_trade_price
     
-    [ humanize_price( 105.percent_of( trade_price ) ), humanize_price( 90.percent_of( trade_price ) ) ]
+    [ humanize_price( 105.percent_of( trade_price ).round( count_decimals( trade_price ) ) ),
+      humanize_price( 90.percent_of( trade_price ).round( count_decimals( trade_price ) ) ) ]
   end
 
   def find_focus
