@@ -12,9 +12,9 @@
   
   <thead>
     <tr>
-      <th>Coin</th>
-      <th>Data</th>
-      <th>Trade</th>
+      <th></th>
+      <th></th>
+      <th></th>
     </tr>
   </thead>
   
@@ -101,7 +101,7 @@
         <td>
           <% unless coin['id'] == @trade_coin %>
             <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: 'Are you sure you want to trade these coins?' } do %>
-              <button  type="button" class="btn btn-outline-warning btn-sm" style="width:75px; height: 30px; font-size:xx-small; margin-top: 13px">
+              <button  type="button" class="btn btn-outline-warning btn-sm" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>
                 <img src=<%= coin['image']%> style="width: 21px">
