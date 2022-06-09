@@ -6,6 +6,28 @@ module CoinsHelper
     x
   end
 
+  def get_grades( coins, price_change, price_gain, short_gain )
+    coins.each do |coin|
+      grade_a = percentage_between( coin[ 'market_cap_change_percentage_24h' ], price_change.abs )
+      grade_b = 10 - percentage_between( coin[ 'vs_24h' ], price_gain )
+      grade_c = percentage_between( coin[ 'short_gain' ], short_gain.abs )
+
+      total = ( ( grade_a * 0.50 ) + ( grade_b * 0.10 ) + ( grade_c * 0.40 ) )
+
+      coin.store( 'trade_grade', total )
+    end
+  end
+
+  def insert_trade_grade_of( coins, price_change = 0, price_gain = 0, short_gain = 0 )
+    coins.each do |coin|
+      price_change += coin[ 'market_cap_change_percentage_24h' ]
+      price_gain += coin[ 'vs_24h' ]
+      short_gain += coin[ 'short_gain' ]
+    end
+
+    get_grades( coins, price_change, price_gain, short_gain )
+  end
+
   def analyze_change_in( trends, arr = [] )
     trends.each_with_index do | trend, index |
       next if index == 0
@@ -82,5 +104,6 @@ module CoinsHelper
 
       insert_price_trends_of( coin, prices )
     end
+    insert_trade_grade_of( coins )
   end
 end

@@ -4,7 +4,7 @@ module HomeHelper
 
     coins -= [ trade_coin ]
     
-    coins = coins.sort_by { |k| k['market_cap_change_percentage_24h'] }.reverse
+    coins = coins.sort_by { |k| k['trade_grade'] }.reverse
 
     coins.unshift( trade_coin )
   end
