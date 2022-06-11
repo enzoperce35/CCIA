@@ -15,7 +15,6 @@
       <th></th>
       <th></th>
       <th></th>
-      <th></th>
     </tr>
   </thead>
   
@@ -67,24 +66,12 @@
               <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
            </em>
 
-           <% change_attr = "color:" + ( coin['market_cap_change_percentage_24h'] >= 0 ? "green;" : "red;" ) + "font-size:" + "7px" %>
-           <em style=<%= change_attr %>>
-             <% price_change = coin['market_cap_change_percentage_24h'].round( 2 ) %>
-             <%= price_change > 0 ? '+' + price_change.to_s : price_change %>
-           </em>
-          </div>
-        </td>
-
-        <td>
-          <% color = "color:" + coin['trajectory'][0] %>
-          <div style="margin-top: 21px; font-size: x-small; float:left">
-            <% if coin['trajectory'][1].round(2) == 0 %>
-              <%= coin['trajectory'][1].round(2) %>
-            <% else %>
-              <em style=<%= color %>>
-                <%= coin['trajectory'][1].round(2).to_s + " / m" %>
-              </em>
-            <% end %>
+            <% color = "color:" + coin['trajectory'][0] + ";" + "font-size:" + "7px" %>
+            <% prefix = coin['trajectory'][1].round(2) >= 0 ? ' + ' : ' - ' %>
+            
+            <em style=<%= color %>>
+              <%= prefix + coin['trajectory'][1].round(2).abs.to_s + "% " + " / m" %>
+            </em>
           </div>
         </td>
 
