@@ -28,7 +28,7 @@ module CoinsHelper
     get_grades( coins, price_change, price_gain, short_gain )
   end
 
-  def analyze_change_in( trends, arr = [] )
+  def analyze_43m_market( trends, arr = [] )
     trends.each_with_index do | trend, index |
       next if index == 0
     
@@ -43,20 +43,58 @@ module CoinsHelper
     arr
   end
 
-  def get_last_ten_changes_of( prices, arr = [] )
-    prices = prices['prices'][-11..-1]
+  def analyze_8h_market( trends, arr = [] )
+    trends = trends.each_slice(10).to_a
+
+    trends.each do |trend|
+      tail = trend.shift
+      head = trend.pop
+
+      indicator = tail > head ? 'red' : 'green'
+
+      arr << [ indicator, ( percentage_between( head, tail ) - 100 ).abs ]
+    end
+
+    arr
+  end
+
+  def get_trend_change_of( prices, count, arr = [] )
+    count -= count * 2 + 1
+    
+    prices = prices['prices'][count..-1]
     
     prices.each { |_, price|  arr << price } 
       
     arr
   end
-  
-  def insert_price_trends_of( coin, prices )
-    trends = get_last_ten_changes_of( prices )
-      
-    coin.store('trend', analyze_change_in( trends ) )
+
+  def insert_8_hr_trend_of( coin, prices )
+    trends = get_trend_change_of( prices, 99 )
+    
+    coin.store('trend_8h', analyze_8h_market( trends ) )
    
     coin
+  end
+  
+  def insert_43_min_trend_of( coin, prices )
+    trends = get_trend_change_of( prices, 10 )
+      
+    coin.store('trend', analyze_43m_market( trends ) )
+   
+    coin
+  end
+
+  def insert_15_min_trajectory_of( coin, prices )
+    trends = get_trend_change_of( prices, 5 )
+
+    tail = trends.shift
+    head = trends.pop
+
+    indicator = tail > head ? 'red' : 'green'
+
+    difference = percentage_between( head, tail ) - 100
+   
+    coin.store( 'trajectory', [ indicator, difference / 15 ] )
   end
 
   def gain_of( market_coin, user_price )
@@ -102,7 +140,11 @@ module CoinsHelper
       
       insert_coin_gain( coin, 'short' )
 
-      insert_price_trends_of( coin, prices )
+      insert_15_min_trajectory_of( coin, prices )
+
+      insert_43_min_trend_of( coin, prices )
+
+      insert_8_hr_trend_of( coin, prices )
     end
     insert_trade_grade_of( coins )
   end
