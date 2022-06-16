@@ -46,6 +46,19 @@ module ApplicationHelper
     user_coins[middle_coin].coin_id
   end
 
+  def price_of( trend, index = nil )
+    if index.nil?
+      trend[ 1 ]
+    else
+      trend[ index ][1]
+    end
+  end
+
+  def value_color( value )
+    value < 0 ? 'red' : 'green'
+  end
+  
+
   def current_price_of(coin, currency = 'php' )
     case coin
     when String

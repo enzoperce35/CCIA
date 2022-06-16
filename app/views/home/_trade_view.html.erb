@@ -67,10 +67,10 @@
            </em>
 
             <% color = "color:" + coin['trajectory'][0] + ";" + "font-size:" + "7px" %>
-            <% prefix = coin['trajectory'][1].round(2) >= 0 ? ' + ' : ' - ' %>
+            <% prefix = coin['trajectory'][0] == 'green' ? ' + ' : ' - ' %>
             
             <em style=<%= color %>>
-              <%= prefix + coin['trajectory'][1].round(2).abs.to_s + "% " + " / m" %>
+              <%= prefix + coin['trajectory'][1].round(2).to_s + "% " + " / m" %>
             </em>
           </div>
         </td>
@@ -82,14 +82,13 @@
             </div>
           
             <div class="my-grid" style="width: 100px" >
-              <% trend_sum_8h = sum_price_changes(coin['trend_8h']) %>
+              <% trend_sum_8h = sum_price_changes( coin['trend_8h'] ) %>
 
               <div>
-                <% coin['trend_8h'].each_with_index do |trend, index| %>
-                  <% trend_color, trend_value = trend %>
-                  <% trend_change = percentage_between( trend_value, trend_sum_8h ) %>
+                <% coin['trend_8h'].each_with_index do | trend, index | %>
+                  <% trend_change = percentage_between( trend.abs, trend_sum_8h ) %>
               
-                  <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + trend_color %>
+                  <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>
                   <% trend_class = 'col-' + (index + 1).to_s + '-10 '%>
 
                   <% unless trend_change < 1 %>
@@ -100,13 +99,12 @@
             </div><br>
               
             <div class="my-grid" style="width: 100px; margin-top: -10px" >
-              <% trend_sum = sum_price_changes(coin['trend']) %>
+              <% trend_sum = sum_price_changes( coin['trend'] ) %>
               
               <% coin['trend'].each_with_index do |trend, index| %>
-                <% trend_color, trend_value = trend %>
-                <% trend_change = percentage_between( trend_value, trend_sum ) %>
+                <% trend_change = percentage_between( trend.abs, trend_sum ) %>
               
-                <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + trend_color %>
+                <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>
                 <% trend_class = 'col-' + (index + 1).to_s + '-10 '%>
 
                 <% unless trend_change < 1 %>

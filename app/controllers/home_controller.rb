@@ -19,6 +19,7 @@ class HomeController < ApplicationController
       Coin.pluck( 'coin_id' ).join(', ')
     elsif @trade_coin.present?
       Coin.where( owned?: false ).pluck( 'coin_id' ).push( @trade_coin ).join(', ')
+      #@trade_coin
     else
       owned = Coin.where( owned?: true ).pluck( 'coin_id' )
       observed = Coin.where( observed?: true ).pluck( 'coin_id' )

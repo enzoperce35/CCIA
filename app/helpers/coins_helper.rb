@@ -1,44 +1,31 @@
 module CoinsHelper
  
   def sum_price_changes(prices, x = 0)
-    prices.each { |p| x += p[1]}
+    prices.each { |p| x += p.abs }
 
     x
   end
 
-  def get_grades( coins, price_change, price_gain, market_change )
-    coins.each do |coin|
-      grade_a = percentage_between( coin[ 'market_cap_change_percentage_24h' ], market_change.abs )
-      grade_b = 10 - percentage_between( coin[ 'vs_24h' ], price_gain )
-      grade_c = 10 - percentage_between( coin[ 'trajectory' ][1], price_change )
+  def insert_trade_grade_of( coins )
+    coins.each_with_index do |coin|
+      grade_a = coin[ 'score_8h' ]
+      grade_b = coin[ 'score_30m' ]
 
-      total = ( grade_a * 0.35 ) + ( grade_b * 0.10 )  + ( grade_c * 0.55 )
+      total = ( grade_a * 0.30 ) + ( grade_b * 0.70 )
 
       coin.store( 'trade_grade', total )
     end
-  end
-
-  def insert_trade_grade_of( coins, price_change = 0, price_gain = 0, market_change = 0)
-    coins.each do |coin|
-      market_change += coin[ 'market_cap_change_percentage_24h' ]
-      price_gain += coin[ 'vs_24h' ]
-      price_change += coin[ 'trajectory' ][1]
-    end
-
-    get_grades( coins, price_change, price_gain, market_change )
   end
 
   def analyze_43m_market( trends, arr = [] )
     trends.each_with_index do | trend, index |
       next if index == 0
     
-      price_a = trends[ index-1 ]
+      price_a = trends[ index-1 ][1]
     
-      price_b = trend
-
-      change_indicator = price_a <= price_b ? 'green' : 'red'
-    
-      arr << [ change_indicator, ( percentage_between( price_b, price_a ) - 100 ).abs ]
+      price_b = trend[1]
+  
+      arr << percentage_between( price_b, price_a ) - 100
     end
     arr
   end
@@ -47,25 +34,19 @@ module CoinsHelper
     trends = trends.each_slice(10).to_a
 
     trends.each do |trend|
-      tail = trend.shift
-      head = trend.pop
+      tail = price_of( trend, 0 )
+      head = price_of( trend, -1 )
 
-      indicator = tail > head ? 'red' : 'green'
-
-      arr << [ indicator, ( percentage_between( head, tail ) - 100 ).abs ]
+      arr <<  percentage_between( head, tail ) - 100
     end
 
     arr
   end
 
-  def get_trend_change_of( prices, count, arr = [] )
+  def get_trend_change_of( prices, count )
     count -= count * 2 + 1
     
-    prices = prices['prices'][count..-1]
-    
-    prices.each { |_, price|  arr << price } 
-      
-    arr
+    prices['prices'][count..-1]
   end
 
   def insert_8_hr_trend_of( coin, prices )
@@ -84,19 +65,50 @@ module CoinsHelper
     coin
   end
 
-  def insert_15_min_trajectory_of( coin, prices )
-    trends = get_trend_change_of( prices, 5 )
+  def sum_score_of( changes, total = 0, dumps = 0 )
+    changes.each do | change |
+      total += change.abs
+      dumps += change.abs if change < 0
+    end
 
-    tail = trends.shift
-    head = trends.pop
-
-    indicator = tail <= head ? 'green' : 'red'
-
-    difference = percentage_between( head, tail ) - 100
-   
-    coin.store( 'trajectory', [ indicator, difference / 15 ] )
+    percentage_between(dumps, total)
   end
 
+  def time_difference_of( time_a, time_b )
+    time_a = Time.parse( DateTime.strptime( time_a[0].to_s, "%Q" ).to_s )
+    time_b = Time.parse( DateTime.strptime( time_b[0].to_s, "%Q" ).to_s )
+
+    (time_b - time_a) / 60
+  end
+
+  # average duration of 3 trends is '9 - 10 min', coingecko price info delay avg is '5 min'
+  def insert_15m_price_trajectory_of( coin, prices )
+    trend = get_trend_change_of( prices, 2 )
+
+    tail = trend[0]
+    head = trend[-1]
+
+    indicator = price_of( tail ) > price_of( head ) ? 'red' : 'green'
+
+    time_difference = time_difference_of( tail, head )
+
+    trajectory = ( (percentage_between( price_of( tail ), price_of( head ) ) - 100) / time_difference ).abs
+   
+    coin.store( 'trajectory', [ indicator, trajectory ] )
+  end
+
+  def insert_analysis_of_8h_trend_of( coin )
+    changes = coin['trend_8h']
+
+    coin.store( 'score_8h', sum_score_of( changes ) )
+  end
+  
+  def insert_analysis_of_30m_trend_of( coin )
+    changes = coin['trend'][0..6]
+
+    coin.store( 'score_30m', sum_score_of( changes ) )
+  end
+  
   def gain_of( market_coin, user_price )
     percentage_between( current_price_of( market_coin ), user_price ) - 100
   end
@@ -140,12 +152,17 @@ module CoinsHelper
       
       insert_coin_gain( coin, 'short' )
 
-      insert_15_min_trajectory_of( coin, prices )
-
-      insert_43_min_trend_of( coin, prices )
-
       insert_8_hr_trend_of( coin, prices )
+      
+      insert_43_min_trend_of( coin, prices )
+      
+      insert_analysis_of_30m_trend_of( coin )
+      
+      insert_analysis_of_8h_trend_of( coin )
+
+      insert_15m_price_trajectory_of( coin, prices )
     end
     insert_trade_grade_of( coins )
+    coins
   end
 end

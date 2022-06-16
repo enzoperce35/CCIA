@@ -43,13 +43,12 @@
               </div>
           
               <div class="my-grid" >
-                <% trend_sum = sum_price_changes(coin['trend']) %>
+                <% trend_sum = sum_price_changes( coin['trend'] ) %>
             
                 <% coin['trend'].each_with_index do |trend, index| %>
-                  <% trend_color, trend_value = trend %>
-                  <% trend_change = percentage_between( trend_value, trend_sum ) %>
+                  <% trend_change = percentage_between( trend.abs, trend_sum ) %>
               
-                  <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + trend_color %>
+                  <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>
                   <% trend_class = 'col-' + (index + 1).to_s + '-10 '%>
 
                   <% unless trend_change < 1 %>
