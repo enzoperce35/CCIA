@@ -131,4 +131,6 @@
     <%= link_to "\u{1F9F9}".encode('utf-8'), root_path(unobserve: @coin_ids), method: 'get', data: { confirm: 'Are you sure you want to remove observed coins?'} %>
 </div>
 
+<%= render 'observe_mode' %>
+
 <br><br><br>

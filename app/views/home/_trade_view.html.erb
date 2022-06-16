@@ -58,6 +58,8 @@
           <%= link_to coin_path(user_coin), method: 'get' do %>
             <em style="font-size: smaller; margin-top: 0%"><%= coin['id'] %></em>
           <% end %>
+          <% trade_grade = coin['id'] == trade_coin['id'] ? 100 - coin[ 'trade_grade' ] : coin[ 'trade_grade' ] %>
+          <em style="font-size: smaller; color: maroon; margin-top: 0%"><%= ' ( ' + "#{ trade_grade.round(2) }" + ' )' %></em>
 
           <hr style="margin-top: 3px; margin-bottom: 0%; width: 70px" >
 
@@ -151,4 +153,5 @@
   <% end %>
 </table>
 
-<%= render 'refresh_timer' unless @observe %>
+<% @timer = coins.count * 3 %>
+<%= render 'observe_mode' %>

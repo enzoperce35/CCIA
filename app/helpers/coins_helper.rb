@@ -6,12 +6,23 @@ module CoinsHelper
     x
   end
 
+  def grade_15m_trajectory_of( coin )
+    indicator, trajectory = coin[ 'trajectory' ]
+
+    if indicator == 'red'
+      50 - trajectory.abs
+    else
+      50 + trajectory.abs
+    end
+  end
+
   def insert_trade_grade_of( coins )
     coins.each_with_index do |coin|
       grade_a = coin[ 'score_8h' ]
       grade_b = coin[ 'score_30m' ]
+      grade_c = grade_15m_trajectory_of( coin )
 
-      total = ( grade_a * 0.30 ) + ( grade_b * 0.70 )
+      total = ( grade_a * 0.10 ) + ( grade_b * 0.20 ) + ( grade_c * 0.60 )
 
       coin.store( 'trade_grade', total )
     end
