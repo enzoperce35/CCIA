@@ -26,8 +26,7 @@ class HomeController < ApplicationController
       ( owned + observed ).join(', ')
     end
     
-    client = helpers.client
-    @coins = helpers.insert_extra_values_from( @coin_ids, client )
+    @coins = helpers.insert_extra_values_from( @coin_ids, helpers.client )
     
     @timer = params[:auto_timer].present? ? set_timer_for( @coins ) : 1000
   end

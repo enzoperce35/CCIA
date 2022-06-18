@@ -16,7 +16,11 @@
         <% end %>
         
         <div>
-          <%= link_to ( is_user_owned?(@selected_coin) ? 'Unmark Coin': 'Mark Coin'), coins_edit_user_coin_path(selected: @selected_coin.coin_id ), method: 'edit' %>
+          <%= link_to ( is_user_owned?( @selected_coin ) ? 'Unmark Coin': 'Mark Coin'), coins_edit_user_coin_path(selected: @selected_coin.coin_id ), method: 'edit' %>
+        </div>
+        
+        <div>
+          <%= link_to 'Edit Coin', edit_coin_path( @selected_coin ), method: 'get' %>
         </div>
 
         <div>

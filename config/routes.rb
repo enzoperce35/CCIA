@@ -10,5 +10,5 @@ Rails.application.routes.draw do
   get 'coins/holdings'
   post 'coins/gain_reset'
 
-  resources :coins, only: [:new, :create, :show, :destroy, :update]
+  resources :coins, only: [:new, :create, :show, :destroy, :update, :edit]
 end

@@ -31,6 +31,8 @@ module ApplicationHelper
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
 
     trade_price = coin.usd_trade_price
+
+    return 'N/A' if !trade_price.is_a?( Float )
     
     [ humanize_price( 105.percent_of( trade_price ).round( count_decimals( trade_price ) ) ),
       humanize_price( 90.percent_of( trade_price ).round( count_decimals( trade_price ) ) ) ]

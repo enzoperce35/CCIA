@@ -24,7 +24,10 @@ ActiveRecord::Schema.define(version: 2022_06_02_213351) do
     t.boolean "observed?", default: false
     t.float "observed_price"
     t.float "on_hold"
+    t.string "last_coin_update", default: ""
     t.float "usd_trade_price"
+    t.string "coin_type", default: "altcoin"
+    t.integer "fuse_count", default: 0
   end
 
   create_table "users", force: :cascade do |t|

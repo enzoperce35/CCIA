@@ -8,7 +8,7 @@ class CoinsController < ApplicationController
     coin = Coin.create(coin_params)
     
     if coin.save
-      set_coin_price( coin )
+      reset_all_gain_data_of( coin )
       
       redirect_to root_path, notice: "new coin saved!"
     else
@@ -32,6 +32,10 @@ class CoinsController < ApplicationController
     end
   end
 
+  def edit
+    @coin = Coin.find( params[ :id ] )
+  end
+
   def edit_user_coin
     coin = Coin.find_by(coin_id: params[:selected])
 
@@ -52,7 +56,7 @@ class CoinsController < ApplicationController
       if selected.present?
         redirect_to coin_path(coin), notice: 'coin updated'
       else
-        redirect_to root_path, notice: 'coin updated'
+        redirect_to root_path, notice: 'coin updated successfuly'
       end
     else
       redirect_back(fallback_location: root_path, notice: 'coin update failed')
@@ -106,6 +110,6 @@ class CoinsController < ApplicationController
   end
 
   def coin_params
-    params.require(:coin).permit( :coin_id, :owned?, :observed?, :observed_price, :on_hold )
+    params.require(:coin).permit( :coin_id, :owned?, :on_hold, :coin_type, :fuse_count, :observed?, :observed_price )
   end
 end
