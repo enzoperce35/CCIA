@@ -5,23 +5,12 @@ module CoinsHelper
     x
   end
 
-  def grade_15m_trajectory_of( coin )
-    indicator, trajectory = coin[ 'trajectory' ]
-
-    if indicator == 'red'
-      50 - trajectory.abs
-    else
-      50 + trajectory.abs
-    end
-  end
-
   def insert_trade_grade_of( coins )
     coins.each_with_index do |coin|
       grade_a = coin[ 'score_8h' ]
       grade_b = coin[ 'score_30m' ]
-      grade_c = coin[ 'score_15m' ]
 
-      total = ( grade_a * 0.10 ) + ( grade_b * 0.25 ) + ( grade_c * 0.65 )
+      total = ( grade_a * 0.30 ) + ( grade_b * 0.70 )
 
       coin.store( 'trade_grade', total )
     end
@@ -98,15 +87,13 @@ module CoinsHelper
     tail = trend[0]
     head = trend[-1]
 
-    indicator = price_of( tail ) > price_of( head ) ? 'red' : 'green'
-
     time_difference = time_difference_of( tail, head )
+    # this part starting here is complicated but it works
+    change = ( percentage_between( price_of( tail ), price_of( head ) ) - 100 ) / time_difference
 
-    trajectory = ( (percentage_between( price_of( tail ), price_of( head ) ) - 100) / time_difference )
-   
-    coin.store( 'trajectory', [ indicator, trajectory.abs ] )
-    
-    coin.store( 'score_15m', percentage_between( indicator == 'red' ? trajectory * -1 : trajectory.abs, 0.08 ) )
+    indicator = change < 0 ? 'green' : 'red'
+
+    coin.store( 'trajectory', [ indicator, change.abs ] )
   end
 
   def insert_analysis_of_8h_trend_of( coin )

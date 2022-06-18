@@ -80,13 +80,15 @@ class CoinsController < ApplicationController
 
   def gain_reset
     gain = params[:gain]
-    coins = Coin.all
+    coins = Coin.pluck( 'coin_id' ).join(', ')
+
+    coins = helpers.client.markets( coins, vs_currency: 'php' )
 
     coins.each do |coin|
       if gain == 'short'
-        coin.update( observed_price: helpers.current_price_of( coin.coin_id ) )
+        helpers.user( coin ).update( observed_price: coin[ 'current_price'] )
       else
-        reset_all_gain_data_of( coin )
+        reset_all_gain_data_of( coins )
       end
     end
 
@@ -95,10 +97,12 @@ class CoinsController < ApplicationController
 
   private
 
-  def reset_all_gain_data_of( coin )
-    price = helpers.current_price_of( coin.coin_id )
-    
-    coin.update( trade_price: price, observed_price: price )
+  def reset_all_gain_data_of( coins )
+    coins.each do |coin|
+      price = coin[ 'current_price' ]
+      
+      helpers.user( coin ).update( trade_price: price, observed_price: price )
+    end
   end
 
   def update_user(coin)

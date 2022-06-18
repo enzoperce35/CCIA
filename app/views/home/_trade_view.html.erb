@@ -60,9 +60,7 @@
           <% end %>
           <% trade_grade = coin['id'] == trade_coin['id'] ? 100 - coin[ 'trade_grade' ] : coin[ 'trade_grade' ] %>
           
-          <% trade_grade = trade_grade < 0 ? '' : ' ( ' + "#{ trade_grade.round(2) }" + ' )' %>
-          
-          <em style="font-size: smaller; color: maroon; margin-top: 0%"><%= trade_grade %></em>
+          <em style="font-size: smaller; color: maroon; margin-top: 0%"><%= ' ( ' + "#{ trade_grade.round(2) }" + ' )' %></em>
 
           <hr style="margin-top: 3px; margin-bottom: 0%; width: 70px" >
 
