@@ -1,0 +1,20 @@
+<h3><%= 'Edit ' + @coin.coin_id %></h3><br>
+
+<%= simple_form_for @coin do |f| %>
+  <%= f.label 'Coin Type' %> 
+  <%= f.input :coin_type, as: :select, collection: ['altcoin', 'stablecoin'], label: false, include_blank: false, input_html: { class: "form-control", required: true } %><br>
+
+  <%= f.label 'Coin on hold?' %> 
+  <%= f.check_box :owned?, label: false %><br>
+  
+  <%= f.label 'Holdings' %> 
+  <%= f.input :on_hold, label: false, input_html: { class: "form-control", required: true } %><br>
+
+  <%= f.label 'Observe?' %> 
+  <%= f.input :observed?, as: :select, collection: set_boolean( @coin.observed? ), label: false, input_html: { class: "form-control", required: true } %><br>
+
+  <%= f.label 'Fuse Count ( only works for stablecoins ) ' %> 
+  <%= f.input :fuse_count, label: false, input_html: { class: "form-control" } %><br>
+  
+  <%= f.submit %> 
+<% end %>
