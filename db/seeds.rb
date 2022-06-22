@@ -1,5 +1,6 @@
 puts 'seeding...'
 
+  # coingecko cloudfare limits seeding to 27, so at least 25 of these coins is to be chosen
   Coin.create(coin_id: 'tether', coin_type: 'stablecoin')
   Coin.create(coin_id: 'binance-usd', coin_type: 'stablecoin')
   Coin.create(coin_id: 'usd-coin', coin_type: 'stablecoin')
@@ -15,31 +16,31 @@ puts 'seeding...'
   Coin.create(coin_id: 'binancecoin', coin_type: 'altcoin')
   Coin.create(coin_id: 'gala', coin_type: 'altcoin')
   Coin.create(coin_id: 'near', coin_type: 'altcoin')
-  Coin.create(coin_id: 'terrausd', coin_type: 'altcoin')
   Coin.create(coin_id: 'chainlink', coin_type: 'altcoin')
   Coin.create(coin_id: 'terra-luna', coin_type: 'altcoin')
   Coin.create(coin_id: 'dodo', coin_type: 'altcoin')
-  Coin.create(coin_id: 'uniswap', coin_type: 'altcoin')
   Coin.create(coin_id: 'litecoin', coin_type: 'altcoin')
   Coin.create(coin_id: 'ellipsis-x', coin_type: 'altcoin')
   Coin.create(coin_id: 'monero', coin_type: 'altcoin')
   Coin.create(coin_id: 'stellar', coin_type: 'altcoin')
-  Coin.create(coin_id: 'bella-protocol', coin_type: 'shitcoin')
-  Coin.create(coin_id: 'jasmycoin', coin_type: 'shitcoin')
-  Coin.create(coin_id: 'moonbeam', coin_type: 'shitcoin')
-  Coin.create(coin_id: 'yield-guild-games', coin_type: 'shitcoin')
   Coin.create(coin_id: 'smooth-love-potion', coin_type: 'shitcoin')
   Coin.create(coin_id: 'sushi', coin_type: 'shitcoin')
-  Coin.create(coin_id: 'mines-of-dalarnia', coin_type: 'shitcoin')
   Coin.create(coin_id: 'shiba-inu', coin_type: 'shitcoin')
+  #Coin.create(coin_id: 'jasmycoin', coin_type: 'shitcoin')
+  #Coin.create(coin_id: 'moonbeam', coin_type: 'shitcoin')
+  #Coin.create(coin_id: 'yield-guild-games', coin_type: 'shitcoin')
+  #Coin.create(coin_id: 'uniswap', coin_type: 'altcoin')
+  #Coin.create(coin_id: 'terrausd', coin_type: 'altcoin')
+  #Coin.create(coin_id: 'bella-protocol', coin_type: 'shitcoin')
+  #Coin.create(coin_id: 'mines-of-dalarnia', coin_type: 'shitcoin')
 
   coin_ids = Coin.pluck( 'coin_id' ).join(', ')
   coins = CoingeckoRuby::Client.new.markets( coin_ids, vs_currency: 'php' )
 
   coins.each do | coin |
     user_coin = Coin.find_by( coin_id: coin[ 'id' ] )
-    
-    user_coin.update( coin_name: coin[ 'name' ], coin_sym: coin[ 'symbol' ] )
+    user_coin.update( coin_name: coin[ 'name' ], coin_sym: coin[ 'symbol' ],
+                      long_gain: coin[ 'current_price' ], short_gain: coin[ 'current_price' ] )
   end
   
 puts 'seeding done'
