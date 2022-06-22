@@ -38,8 +38,8 @@ puts 'seeding...'
 
   coins.each do | coin |
     user_coin = Coin.find_by( coin_id: coin[ 'id' ] )
-    user_coin.update( coin_name: coin[ 'name' ], coin_sym: coin[ 'symbol' ],
-                      long_gain: coin[ 'current_price' ], short_gain: coin[ 'current_price' ] )
+    
+    user_coin.update( coin_name: coin[ 'name' ], coin_sym: coin[ 'symbol' ] )
   end
   
 puts 'seeding done'
