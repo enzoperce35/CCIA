@@ -32,5 +32,14 @@ puts 'seeding...'
   Coin.create(coin_id: 'sushi', coin_type: 'shitcoin')
   Coin.create(coin_id: 'mines-of-dalarnia', coin_type: 'shitcoin')
   Coin.create(coin_id: 'shiba-inu', coin_type: 'shitcoin')
+
+  coin_ids = Coin.pluck( 'coin_id' ).join(', ')
+  coins = CoingeckoRuby::Client.new.markets( coin_ids, vs_currency: 'php' )
+
+  coins.each do | coin |
+    user_coin = Coin.find_by( coin_id: coin[ 'id' ] )
+    user_coin.update( coin_name: coin[ 'name' ], coin_sym: coin[ 'symbol' ],
+                      long_gain: coin[ 'current_price' ], short_gain: coin[ 'current_price' ] )
+  end
   
 puts 'seeding done'

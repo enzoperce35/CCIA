@@ -93,9 +93,9 @@ class CoinsController < ApplicationController
     coins = helpers.client.markets( coins, vs_currency: 'php' )
 
     if params[ :gain ] == 'short'
-      coins.each { | c | helpers.user( c ).update( short_gain: c[ 'current_price'] ) }
+      coins.each { | c | helpers.user( c ).update( short_gain: c[ 'current_price' ] ) }
     else
-      coins.each { | c | helpers.user( c ).refresh_gain_data( c[ 'current_price' ]) }
+      coins.each { | c | refresh_gain_data( helpers.user( c ),  c[ 'current_price' ] ) }
     end
 
     redirect_to home_path
@@ -124,8 +124,8 @@ class CoinsController < ApplicationController
     end
   end
 
-  def refresh_gain_data( price )
-    self.update( long_gain: price, short_gain: price )
+  def refresh_gain_data( coin, price )
+    coin.update( long_gain: price, short_gain: price )
   end
 
   def insert_initial_data_of( market_coin, user_coin )
