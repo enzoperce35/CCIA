@@ -10,10 +10,10 @@
   </thead>
   
   <% all_coins.each_with_index do |coin, index| %>
-    <% user_coin = user( coin ) %>
+    <% user_coin = user(coin) %>
     <% long_gain = coin['long_gain'] %>
     <% short_gain = coin['short_gain'] %>
-
+    
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
     <% data = status.to_s + '%' %>
@@ -24,8 +24,8 @@
         <td style="margin-bottom: 0%; font-size: smaller;">
           <div style="font-size: smaller;">
             <img src=<%= coin['image']%>>
-            <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-            <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
+            <%= link_to coin['symbol'], coin_path( user_coin ), method: 'get' %>
+            <%= "\u{1FA99}".encode('utf-8') if is_user_owned?( user_coin ) %>
           </div>
 
           <hr style="width:85px; margin-top:0%; margin-bottom:0%">
@@ -74,8 +74,7 @@
               <hr style="margin-top:0px; margin-bottom:0px">
 
               <div style="font-size: small; text-align: right">
-                <% holding_price = user_coin.on_hold.nil? ? 'N/A' : ( user_coin.on_hold * current_price_of( coin ) ).round(2).to_s %>
-                <%= holding_price == 'N/A' ? "\u{20B1}".encode('utf-8') + '0.00' : "\u{20B1}".encode('utf-8') + holding_price %>
+                <em style="font-weight:bold; color:royalblue"><%= index.to_i + 1 %></em>
               </div>
 
               <hr style="margin-top:0px; margin-bottom:0px">
@@ -117,20 +116,7 @@
       render_data(data_arr, id_arr);
     </script>
   <% end %>
-</table><br>
+</table>
 
-<hr>
-
-<div style="float: right;">
-  <% if @timer == 1000 %>
-    <%= link_to "\u{1F13C}".encode('utf-8'), root_path(auto_timer: true), method: 'get' %>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-  <% else %>
-    <%= link_to "\u{1F130}", root_path, method: 'get' %>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-  <% end %>
-    
-    <%= link_to "\u{1F9F9}".encode('utf-8'), root_path(unobserve: @coin_ids), method: 'get', data: { confirm: 'Are you sure you want to remove observed coins?'} %>
-</div>
-
-<%= render 'observe_mode' %>
-
-<br><br><br>
+<%= render 'coins/view_functions/manual_refresh' %>
+<%= render 'coins/view_functions/auto_focus' %>

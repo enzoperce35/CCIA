@@ -1,8 +1,0 @@
-<%= simple_form_for @coin do |f| %>
-  <%= f.label 'Input ' + @coin.coin_id + ' holdings' %> 
-  <%= f.input :on_hold, label: false, input_html: { class: "form-control", required: true } %><br>
-
-  <%= hidden_field_tag 'selected', true %>
-  
-  <%= f.submit 'Submit' %> 
-<% end %>

@@ -5,7 +5,9 @@
     </div>
 
     <div id= "main-menu">
-      <%= render 'layouts/burger' %>
+      <% unless Coin.count.zero? %>
+        <%= render 'layouts/burger' %>
+      <% end %>
     </div>  
   </div>
 </nav>

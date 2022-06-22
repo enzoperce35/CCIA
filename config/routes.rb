@@ -1,14 +1,13 @@
 Rails.application.routes.draw do
   devise_for :users
   
-  root 'home#index'
+  root 'coins#index'
 
+  get 'home/index', as: 'home'
   get 'coins/trade_coin', as: 'trade'
   post 'coins/make_trade', to: 'coins#make_trade'
-  post 'coins/edit_user_coin'
-  post 'home/observe'
-  get 'coins/holdings'
   post 'coins/gain_reset'
+  post 'coins/observe'
 
-  resources :coins, only: [:new, :create, :show, :destroy, :update, :edit]
+  resources :coins
 end

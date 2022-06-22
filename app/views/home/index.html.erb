@@ -1,28 +1,6 @@
-<script>
-  data_arr = []
-  id_arr = []
-
-  function render_data(data_arr, id_arr) {
-  data_arr.forEach((data, index) => {
-    const id = id_arr[index]
-   
-     document.getElementById("prog-" + id).style.width = data;
-    });
-  };
-</script>
-
-<% if @all %>
-  <%= render 'coin_view' %>
-<% elsif @trade_coin.present? %>
-  <%= render 'trade_view' %>
+<% if @coins.count.zero? %>
+  <h2>No saved coins yet</h2>
+  <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
 <% else %>
-  <% if @coins.class == String %>
-    <h3><%= @coins %></h3>
-  <% else %>
-    <%= render 'observe_view' %>
-  <% end %>
-<% end %>
 
-<script>
-  document.getElementById('<%= find_focus %>').scrollIntoView( { block: "center" } );
-</script>
+<% end %>

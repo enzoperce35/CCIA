@@ -11,34 +11,20 @@
         <% if is_user_owned?( @selected_coin ) %>
           <div>
             <% high, low = generate_margins( @selected_coin ) %>
-            <%= "rise margin: #{ high }, drop margin: #{low}" %>
+            <%= "rise margin: #{ high }, drop margin: #{ low }" %>
           </div>
         <% end %>
-        
-        <div>
-          <%= link_to ( is_user_owned?( @selected_coin ) ? 'Unmark Coin': 'Mark Coin'), coins_edit_user_coin_path(selected: @selected_coin.coin_id ), method: 'edit' %>
-        </div>
         
         <div>
           <%= link_to 'Edit Coin', edit_coin_path( @selected_coin ), method: 'get' %>
         </div>
 
-        <div>
-          <% action = @selected_coin.on_hold.nil? ? 'Add' : 'Edit' %>
-          
-          <%= link_to action + ' Holdings', coins_holdings_path( selected: @selected_coin.coin_id ), method: 'get' %>
-        </div>
-
-        <% if !is_user_owned?( @selected_coin ) %>
+        <% unless is_user_owned?( @selected_coin ) %>
           <div>
-            <% action = @selected_coin.observed? ? 'Stop' : 'Start' %>
-            <%= link_to action + ' Observing', home_observe_path( coin_to_observe: @selected_coin ), method: 'post' %>
+            <% action = @selected_coin.is_observed ? 'Stop' : 'Start' %>
+            <%= link_to action + ' Observing', coins_observe_path( coin_to_observe: @selected_coin.coin_id ), method: 'post' %>
           </div>
         <% end %>
-        
-        <div>
-          <%= link_to 'Delete Coin', coin_path(@selected_coin), method: 'delete', data: { confirm: "Are you sure you want to delete #{market(@selected_coin)['name']} ?"} %>
-        </div>
       <% end %>
 
       <div>

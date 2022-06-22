@@ -114,7 +114,7 @@ module CoinsHelper
 
   def insert_coin_gain( market_coin, gain = '' )
     user_coin = user( market_coin )
-    user_price = gain == 'long' ? user_coin.trade_price : user_coin.observed_price
+    user_price = gain == 'long' ? user_coin.long_gain : user_coin.short_gain
     
     if user_price.nil?
       market_coin.store( "#{ gain }_gain", 'N/A' )
@@ -131,10 +131,10 @@ module CoinsHelper
     percentage_between(current, range)
   end
   
-  def insert_current_vs_24h_prices_of( market_coin )
-    difference = get_difference( high_24h( market_coin ), low_24h( market_coin ), current_price_of( market_coin ) )
+  def insert_current_vs_24h_prices_of( coin )
+    difference = get_difference( high_24h( coin ), low_24h( coin ), current_price_of( coin ) )
   
-    market_coin.store( "vs_24h", difference )
+    coin.store( "vs_24h", difference )
   end
   
   def insert_extra_values_from( coins, client_user )
@@ -143,7 +143,7 @@ module CoinsHelper
     coins = client_user.markets( coins, vs_currency: 'php' )
     
     coins.map do |coin|
-      prices = client_user.minutely_historical_price( coin['id'] )
+      prices = client_user.minutely_historical_price( coin[ 'id' ] )
       
       insert_current_vs_24h_prices_of( coin )
       

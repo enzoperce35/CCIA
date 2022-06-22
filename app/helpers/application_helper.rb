@@ -39,13 +39,13 @@ module ApplicationHelper
   end
 
   def find_focus
-    user_coins = Coin.where(owned?: true)
+    user_coins = Coin.owned
 
     return Coin.first.coin_id if user_coins.count.zero?
 
-    middle_coin = (user_coins.count / 2).to_i
+    middle_coin = ( user_coins.count / 2 ).to_i
 
-    user_coins[middle_coin].coin_id
+    user_coins[ middle_coin ].coin_id
   end
 
   def price_of( trend, index = nil )
@@ -60,7 +60,6 @@ module ApplicationHelper
     value < 0 ? 'red' : 'green'
   end
   
-
   def current_price_of(coin, currency = 'php' )
     case coin
     when String
@@ -79,15 +78,23 @@ module ApplicationHelper
   end
 
   def no_user_coin_yet?
-    Coin.where(owned?: true).count.zero?
+    Coin.count.zero?
   end
 
-  def is_user_owned?(coin)
-    coin.owned?
+  def no_displayable?( coins )
+    coins.is_a?( String )
+  end
+
+  def is_user_owned?( coin )
+    coin.fuse_count > 0
   end
 
   def percentage_between(price_a, price_b)
     ((price_a.to_f / price_b.to_f)  * 100).round(2)
+  end
+
+  def show_ids( coin )
+    "#{ coin.coin_name }(#{ coin.coin_sym })"
   end
 
   def assemble(list)
@@ -99,7 +106,7 @@ module ApplicationHelper
   end
 
   def user(coin)
-    coin_id = coin.is_a?(String) ? coin : coin['id']
+    coin_id = coin.is_a?( String ) ? coin : coin[ 'id' ]
     
     Coin.find_by(coin_id: coin_id) 
   end

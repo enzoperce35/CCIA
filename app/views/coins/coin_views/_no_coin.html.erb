@@ -1,0 +1,3 @@
+<%= @coins %>
+
+<%= ( link_to 'Add Coin', new_coin_path, method: 'get' ) if Coin.count.zero? %><br>

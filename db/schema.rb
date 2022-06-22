@@ -10,24 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_02_213351) do
+ActiveRecord::Schema.define(version: 2022_04_04_212353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "coins", force: :cascade do |t|
     t.string "coin_id"
-    t.boolean "owned?", default: false
-    t.float "trade_price"
+    t.string "coin_name"
+    t.string "coin_sym"
+    t.string "coin_type", default: "altcoin"
+    t.boolean "is_observed", default: false, null: false
+    t.float "long_gain"
+    t.float "short_gain"
+    t.float "holdings"
+    t.float "usd_trade_price"
+    t.integer "fuse_count", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "observed?", default: false
-    t.float "observed_price"
-    t.float "on_hold"
-    t.string "last_coin_update", default: ""
-    t.float "usd_trade_price"
-    t.string "coin_type", default: "altcoin"
-    t.integer "fuse_count", default: 0
   end
 
   create_table "users", force: :cascade do |t|

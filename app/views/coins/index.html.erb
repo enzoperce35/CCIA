@@ -1,0 +1,14 @@
+<script>
+  data_arr = []
+  id_arr = []
+
+  function render_data(data_arr, id_arr) {
+  data_arr.forEach((data, index) => {
+    const id = id_arr[index]
+   
+     document.getElementById("prog-" + id).style.width = data;
+    });
+  };
+</script>
+
+<%= render 'coins/coin_views/' + ( no_displayable?( @coins ) ? 'no_coin' : @user_view ) %>

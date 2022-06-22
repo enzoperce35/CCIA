@@ -10,10 +10,10 @@
   </thead>
   
   <% all_coins.each_with_index do |coin, index| %>
-    <% user_coin = user(coin) %>
+    <% user_coin = user( coin ) %>
     <% long_gain = coin['long_gain'] %>
     <% short_gain = coin['short_gain'] %>
-    
+
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
     <% data = status.to_s + '%' %>
@@ -25,7 +25,7 @@
           <div style="font-size: smaller;">
             <img src=<%= coin['image']%>>
             <%= link_to coin['symbol'], coin_path(user_coin), method: 'get' %>
-            <%= "\u{1FA99}".encode('utf-8') if is_user_owned?(user_coin) %>
+            <%= "\u{1FA99}".encode('utf-8') if is_user_owned?( user_coin ) %>
           </div>
 
           <hr style="width:85px; margin-top:0%; margin-bottom:0%">
@@ -74,7 +74,8 @@
               <hr style="margin-top:0px; margin-bottom:0px">
 
               <div style="font-size: small; text-align: right">
-                <em style="font-weight:bold; color:royalblue"><%= index.to_i + 1 %></em>
+                <% holding_price = user_coin.holdings.nil? ? 'N/A' : ( user_coin.holdings * current_price_of( coin ) ).round(2).to_s %>
+                <%= holding_price == 'N/A' ? "\u{20B1}".encode('utf-8') + '0.00' : "\u{20B1}".encode('utf-8') + holding_price %>
               </div>
 
               <hr style="margin-top:0px; margin-bottom:0px">
@@ -116,6 +117,20 @@
       render_data(data_arr, id_arr);
     </script>
   <% end %>
-</table>
+</table><br>
 
-<%= render 'refresh_timer' unless @observe %>
+<hr>
+
+<div style="float: right;">
+  <% if @auto_timer.nil? %>
+    <%= link_to "\u{1F130}".encode('utf-8'), root_path( auto_timer: true ), method: 'get' %>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+  <% else %>
+    <%= link_to "\u{1F13C}", root_path, method: 'get' %>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+  <% end %>
+    
+  <%= link_to "\u{1F9F9}".encode('utf-8'), coins_observe_path( coin_to_observe: @coin_ids ), method: 'post', data: { confirm: 'Are you sure you want to remove observed coins?'} %>
+</div>
+
+<%= render 'coins/view_functions/auto_refresh' if @auto_timer %>
+
+<br><br><br>

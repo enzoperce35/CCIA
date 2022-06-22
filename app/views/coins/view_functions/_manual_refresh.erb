@@ -1,9 +1,10 @@
 <% refresh = "\u27F3".encode('utf-8') %>
+<% time = @timer %>
 
-<div id='reload' style="text-align:right"><span id="cnt" style="color:red;">80</span></div>
+<div id='reload' style="text-align:right"><span id="cnt" style="color:red;"><%= time %></span></div>
 
 <script>
-  var counter = 80;
+  var counter = "<%= time %>";
     
   window.setInterval(function () {
     counter--;
@@ -20,7 +21,7 @@
   
     }, 1000);
   
-  window.setInterval('refresh()', 80000);
+  window.setInterval('refresh()', counter * 1000);
   
   function refresh() {
     refresh = document.getElementById('reload')
