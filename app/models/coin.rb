@@ -5,9 +5,11 @@ class Coin < ApplicationRecord
 
   before_save :check_coin_legitimacy
 
-  scope :owned, -> { where( 'fuse_count > ?', 0 ) }
-  scope :reserved, -> { where( 'fuse_count <= ?', 0 ) }
-  scope :observed, -> { where( is_observed: true ) }
+  scope :owned, -> { where( is_active: true ).where( 'fuse_count > ?', 0 ) }
+  scope :idle, -> { where( is_active: true ).where( 'fuse_count <= ?', 0 ) }
+  scope :observed, -> { where( is_active: true, is_observed: true ) }
+  scope :active, -> { where( is_active: true ) }
+  scope :inactive, -> { where( is_active: false ) }
 
   private
 

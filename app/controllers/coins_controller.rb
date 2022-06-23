@@ -18,11 +18,12 @@ class CoinsController < ApplicationController
   end
 
   def index
-    all = params[:all]
+    actives = params[ :actives ]
+    inactives = params[ :inactives ]
     @trade_coin = params[:coins][:trade] if params[:coins].present?
     @auto_timer = params[ :auto_timer ]
 
-    @user_view = fetch_user_view( all, @trade_coin )
+    @user_view = fetch_user_view( actives, inactives, @trade_coin )
 
     @coin_ids = fetch_user_coins( @user_view, @trade_coin )
 
@@ -58,7 +59,7 @@ class CoinsController < ApplicationController
       if coin.is_observed
         redirect_to root_path, notice: notice
       else
-        redirect_to home_path
+        redirect_to home_path, notice: notice
       end
     else
       redirect_back( fallback_location: root_path, notice: 'coin update failed' )
@@ -72,7 +73,7 @@ class CoinsController < ApplicationController
   end
 
   def trade_coin
-    @user_coins = Coin.where( "fuse_count > ?", 0 )
+    @user_coins = Coin.owned
   end
 
   def make_trade
@@ -88,7 +89,7 @@ class CoinsController < ApplicationController
   end
 
   def gain_reset
-    coins = Coin.pluck( 'coin_id' ).join(', ')
+    coins = Coin.active.pluck( 'coin_id' ).join(', ')
 
     coins = helpers.client.markets( coins, vs_currency: 'php' )
 
@@ -101,11 +102,23 @@ class CoinsController < ApplicationController
     redirect_to home_path
   end
 
+  def activate_coin
+    coin = Coin.find_by( coin_id: params[ :to_activate ] )
+
+    market = helpers.market( coin )
+
+    coin.update( is_active: true, coin_name: market[ 'name' ], coin_sym: market[ 'symbol' ], long_gain: market[ 'current_price' ], short_gain: market[ 'current_price' ] )
+
+    redirect_to root_path( actives: true )
+  end
+
   private
 
-  def fetch_user_view( all, trade )
-    if all
-      'coins_view'
+  def fetch_user_view( actives, inactives, trade )
+    if actives
+      'active_coins_view'
+    elsif inactives
+      'inactive_coins_view'
     elsif trade.present?
       'trade_view'
     else
@@ -115,10 +128,12 @@ class CoinsController < ApplicationController
 
   def fetch_user_coins( view, trade_coin = nil )
     case view
-    when 'coins_view'
-      Coin.pluck( 'coin_id' ).join(', ')
+    when 'active_coins_view'
+      Coin.active.pluck( 'coin_id' ).join(', ')
+    when 'inactive_coins_view'
+      Coin.inactive.pluck( 'coin_id' ).join(', ')
     when 'trade_view'
-      Coin.reserved.pluck( 'coin_id' ).push( @trade_coin ).join(', ')
+      Coin.idle.pluck( 'coin_id' ).push( @trade_coin ).join(', ')
     else
       ( Coin.owned + Coin.observed ).pluck( 'coin_id' ).join(', ')
     end
@@ -150,6 +165,6 @@ class CoinsController < ApplicationController
   end
 
   def coin_params
-    params.require(:coin).permit( :coin_id, :coin_type, :is_observed, :long_gain, :short_gain, :holdings, :usd_trade_price, :fuse_count )
+    params.require(:coin).permit( :coin_id, :coin_type, :is_observed, :is_active, :long_gain, :short_gain, :holdings, :usd_trade_price, :fuse_count )
   end
 end

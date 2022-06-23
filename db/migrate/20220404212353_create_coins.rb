@@ -5,6 +5,7 @@ class CreateCoins < ActiveRecord::Migration[6.1]
       t.string :coin_name
       t.string :coin_sym
       t.string :coin_type, default: 'altcoin'
+      t.boolean :is_active, null: false, default: true
       t.boolean :is_observed, null: false, default: false
       t.float :long_gain
       t.float :short_gain

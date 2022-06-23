@@ -32,13 +32,13 @@
       </div>
 
       <div>
-        <% if @all || @selected_coin.present? || @trade_coin.present? %>
+        <% unless @user_view == 'observe_view' %>
           <%= link_to 'Observe_Mode', root_path, method: 'get' %>
         <% end %>
       </div>
 
       <div>
-        <% unless @trade_coin.present? %>
+        <% unless @user_view == 'trade_view' %>
           <%= link_to 'Trade Coins', trade_path, method: 'get' %>
         <% end %>
       </div>
@@ -47,14 +47,15 @@
         <br><br><%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
       </div>
 
+      <% unless @user_view == 'inactive_coins_view' %>
+        <div>
+          <%= link_to 'Reset Short Gain Data', coins_gain_reset_path( gain: 'short' ), method: 'post', data: { confirm: 'Are you sure you want to reset short gain data?' }  %>
+        </div>
       
-      <div>
-        <%= link_to 'Reset Short Gain Data', coins_gain_reset_path( gain: 'short' ), method: 'post', data: { confirm: 'Are you sure you want to reset short gain data?' }  %>
-      </div>
-      
-      <div>
-        <%= link_to 'Reset All Gain Data', coins_gain_reset_path( gain: 'all' ), method: 'post', data: { confirm: 'Are you sure you want to reset all gain data?'} %>
-      </div>
+        <div>
+          <%= link_to 'Reset All Gain Data', coins_gain_reset_path( gain: 'all' ), method: 'post', data: { confirm: 'Are you sure you want to reset all gain data?'} %>
+        </div>
+      <% end %>
     </ul>
   </ul>
 </div>

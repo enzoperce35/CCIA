@@ -1,6 +1,41 @@
-<% if @coins.count.zero? %>
-  <h2>No saved coins yet</h2>
-  <%= link_to 'Add Coin', new_coin_path, method: 'get' %><br>
-<% else %>
+<table class = 'table'>
 
-<% end %>
+  <caption id='caption'>
+    <h4>
+      Trending Coins
+    </h4>
+  </caption>
+  
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  
+  <% @trending[ 'coins' ].each_with_index do | coin | %>
+    <% coin = coin[ 'item' ] %>
+    
+    <tbody>
+      <tr id="<%= coin['id'] %>">
+        <td style="font-size: smaller;">
+          <div style="font-size: smaller;">
+            <img src=<%= coin[ 'thumb' ]%>>
+            <%= coin[ 'name' ] + '( '  + coin[ 'symbol' ] + ' )' %>
+          </div>
+        </td>
+
+        <td style="font-size: small">
+          <%= coin[ 'market_cap_rank' ] %>
+        </td>
+        
+        <td>
+          <em style="font-size: 8px;">
+            <%= '$ ' + humanize_price( coin[ 'price_btc' ] ).to_s %>
+          </em>
+        </td>
+      </tr>
+    </tbody>
+  <% end %>
+</table><br><br><br>

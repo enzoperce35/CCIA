@@ -16,6 +16,16 @@ module CoinsHelper
     end
   end
 
+  def filter_trade( coins, trade_coin )
+    trade_coin = coins.find { | c | c[ 'id' ] == trade_coin }
+
+    coins -= [ trade_coin ]
+    
+    coins = coins.sort_by { | k | k[ 'trade_grade' ] }.reverse
+
+    coins.unshift( trade_coin )
+  end
+
   def analyze_43m_market( trends, arr = [] )
     trends.each_with_index do | trend, index |
       next if index == 0

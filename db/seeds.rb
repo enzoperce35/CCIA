@@ -1,6 +1,6 @@
 puts 'seeding...'
 
-  # coingecko cloudfare limits seeding to 27, so at least 25 of these coins is to be chosen
+  # coingecko cloudfare limits seeding to 27, so at least 25 of these coins is chosen to be active
   Coin.create(coin_id: 'tether', coin_type: 'stablecoin')
   Coin.create(coin_id: 'binance-usd', coin_type: 'stablecoin')
   Coin.create(coin_id: 'usd-coin', coin_type: 'stablecoin')
@@ -26,15 +26,16 @@ puts 'seeding...'
   Coin.create(coin_id: 'smooth-love-potion', coin_type: 'shitcoin')
   Coin.create(coin_id: 'sushi', coin_type: 'shitcoin')
   Coin.create(coin_id: 'shiba-inu', coin_type: 'shitcoin')
-  #Coin.create(coin_id: 'jasmycoin', coin_type: 'shitcoin')
-  #Coin.create(coin_id: 'moonbeam', coin_type: 'shitcoin')
-  #Coin.create(coin_id: 'yield-guild-games', coin_type: 'shitcoin')
-  #Coin.create(coin_id: 'uniswap', coin_type: 'altcoin')
-  #Coin.create(coin_id: 'terrausd', coin_type: 'altcoin')
-  #Coin.create(coin_id: 'bella-protocol', coin_type: 'shitcoin')
-  #Coin.create(coin_id: 'mines-of-dalarnia', coin_type: 'shitcoin')
+  
+  Coin.create(coin_id: 'jasmycoin', coin_type: 'shitcoin', is_active: false )
+  Coin.create(coin_id: 'moonbeam', coin_type: 'shitcoin', is_active: false )
+  Coin.create(coin_id: 'yield-guild-games', coin_type: 'shitcoin', is_active: false )
+  Coin.create(coin_id: 'uniswap', coin_type: 'altcoin', is_active: false )
+  Coin.create(coin_id: 'terrausd', coin_type: 'altcoin', is_active: false )
+  Coin.create(coin_id: 'bella-protocol', coin_type: 'shitcoin', is_active: false )
+  Coin.create(coin_id: 'mines-of-dalarnia', coin_type: 'shitcoin', is_active: false )
 
-  coin_ids = Coin.pluck( 'coin_id' ).join(', ')
+  coin_ids = Coin.where( is_active: true ).pluck( 'coin_id' ).join(', ')
   coins = CoingeckoRuby::Client.new.markets( coin_ids, vs_currency: 'php' )
 
   coins.each do | coin |

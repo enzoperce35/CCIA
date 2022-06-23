@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2022_04_04_212353) do
     t.string "coin_name"
     t.string "coin_sym"
     t.string "coin_type", default: "altcoin"
+    t.boolean "is_active", default: true, null: false
     t.boolean "is_observed", default: false, null: false
     t.float "long_gain"
     t.float "short_gain"

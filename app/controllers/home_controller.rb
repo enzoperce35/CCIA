@@ -2,7 +2,7 @@ class HomeController < ApplicationController
   #before_action :authenticate_user!
   
   def index
-    @coins = Coin.all
+    @trending = helpers.client.trending_searches
   end
 
   private

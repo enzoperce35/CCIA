@@ -1,12 +1,14 @@
-<% coins = filter_trade( @coins, @trade_coin ) %>
-<% trade_coin = coins.first %>
+<% coins = @coins.sort_by { | k | k[ 'trade_grade' ] }.reverse %>
+
+<div style="float: right;">
+  <%= link_to "\uE241".encode('utf-8'), root_path( actives: true ), method: 'get' %>
+</div>
 
 <table class = 'table'>
 
   <caption id='caption'>
     <h4>
-      <%= ( trade_coin['name'] + ' trade  ' ).titleize %>
-      <img style="width: 40px;" src=<%= trade_coin['image']%>>
+      Reserved Coins
     </h4>
   </caption>
   
@@ -15,13 +17,12 @@
       <th></th>
       <th></th>
       <th></th>
+      <th></th>
     </tr>
   </thead>
   
   <% coins.each_with_index do |coin, index| %>
     <% user_coin = user(coin) %>
-    <% long_gain = coin[ 'long_gain' ] %>
-    <% short_gain = coin[ 'short_gain' ] %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -32,54 +33,34 @@
       <tr id="<%= coin['id'] %>">
         <td style="font-size: smaller;">
           <div style="font-size: smaller;">
-            <% if long_gain == 'N/A' %>
-              <%= long_gain %>
-            <% else %>
-              <% color_a = "color:" + ( long_gain >= 0 ? "green" : "red" ) %>
-            
-              <em style=<%= color_a %>>
-                <%= long_gain.round(2) %>
-              </em>
-            <% end %>
-            
-            <% if short_gain == 'N/A' %>
-              <%= short_gain %>
-            <% else %>
-              <% color = "color:" + ( short_gain >= 0 ? "green;" : "red;" ) + "font-size:" + "xx-small" %>
-
-              <em style=<%= color %>>
-                <%= short_gain.round(2) %>
-              </em>
-            <% end %>
+            <img src=<%= coin['image']%>>
+            <%= coin['symbol'] %>
           </div>
           
           <hr style="margin-top: 0%; margin-bottom: 0%; width: 70px" >
 
-          <%= link_to coin_path(user_coin), method: 'get' do %>
-            <em style="font-size: smaller; margin-top: 0%"><%= coin['id'] %></em>
-          <% end %>
-          <% trade_grade = coin['id'] == trade_coin['id'] ? 100 - coin[ 'trade_grade' ] : coin[ 'trade_grade' ] %>
-          
-          <em style="font-size: smaller; color: maroon; margin-top: 0%"><%= ' ( ' + "#{ trade_grade.round(2) }" + ' )' %></em>
-
-          <hr style="margin-top: 3px; margin-bottom: 0%; width: 70px" >
-
           <div>
-           <em style="font-size: 8px;">
-              <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
-           </em>
-
+            <em style="font-size: 8px;">
+               <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
+            </em>
+ 
             <% color = "color:" + coin['trajectory'][0] + ";" + "font-size:" + "7px" %>
             <% prefix = coin['trajectory'][0] == 'green' ? ' + ' : ' - ' %>
-            
+             
             <em style=<%= color %>>
               <%= prefix + coin['trajectory'][1].round(2).to_s + "% " + " / m" %>
             </em>
           </div>
         </td>
 
+        <td>
+          <div style="margin-top: 10px;">
+            <em style="font-size: small; color: maroon"><%= coin[ 'trade_grade' ] .round(2) %></em>
+          </div>
+        </td>
+
         <td style="padding:0%">
-          <div style="margin-top:15px;">
+          <div style="margin-top:10px;">
             <div class="progress" style="width: 100px; margin-top:7px">
               <div id=<%= id_target %> class="progress-bar <%= 'bg-info' %>" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
@@ -104,7 +85,7 @@
             <div class="my-grid" style="width: 100px; margin-top: -10px" >
               <% trend_sum = sum_price_changes( coin['trend'] ) %>
               
-              <% coin['trend'].each_with_index do |trend, index| %>
+              <% coin[ 'trend' ].each_with_index do |trend, index| %>
                 <% trend_change = percentage_between( trend.abs, trend_sum ) %>
               
                 <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>
@@ -120,14 +101,14 @@
 
         <td>
           <% unless coin['id'] == @trade_coin %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: 'Are you sure you want to trade these coins?' } do %>
-              <button  type="button" class="btn btn-outline-warning btn-sm" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
-                <img src=<%= trade_coin['image'] %> style="width: 21px">
-                =>
-                <img src=<%= coin['image']%> style="width: 21px">
-              </button>
+            <div style="margin-top: 9px;">
+              <%= link_to activate_path( to_activate: coin[ 'id'] ), method: 'post', data: { confirm: 'Are you sure you want to activate this coin?' } do %>
+                <button  type="button" class="btn btn-outline-warning btn-sm" style="width:60px; height: 30px; font-size: small; padding-left: 0%; padding-right: 0%; float:right">
+                  ACTIVATE
+                </button>
+              <% end %>
             <% end %>
-          <% end %>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -143,4 +124,4 @@
   <% end %>
 </table>
 
-<%= render 'coins/view_functions/auto_refresh' %>
+<%= render 'coins/view_functions/manual_refresh' %>

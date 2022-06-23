@@ -1,4 +1,8 @@
-<% all_coins = @coins.sort_by { |k| k['vs_24h'] }.reverse %>
+<% all_coins = @coins.sort_by { |k| k[ 'long_gain' ] }.reverse %>
+
+<div style="float: right;">
+  <%= link_to "\uE245".encode('utf-8'), root_path( inactives: true ), method: 'get' %>
+</div>
 
 <table class = 'table'>
   
@@ -100,21 +104,10 @@
       :root {
       --data: <%= data %>;
       --index: <%= index %>;
-    }
+      }
     </style>
 
-    <script>
-      var css_root = document.querySelector(':root');
-      var css_data = getComputedStyle(css_root);
-  
-      var data = css_data.getPropertyValue('--data');
-      var index = css_data.getPropertyValue('--index');
-
-      data_arr.push(data)
-      id_arr.push(Number(index))
-
-      render_data(data_arr, id_arr);
-    </script>
+  <%= render 'coins/view_functions/price_indicator' %>
   <% end %>
 </table>
 
