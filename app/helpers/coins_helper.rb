@@ -1,4 +1,14 @@
 module CoinsHelper
+
+  def market_status_of( coins, dumps = 0 )
+    coins.each do | coin |
+      latest_trend = coin[ 'trend' ][ -1 ]
+
+      dumps += 1 if latest_trend < 0
+    end
+    ( dumps.to_f / coins.count.to_f ) * 100
+  end
+  
   def sum_price_changes(prices, x = 0)
     prices.each { |p| x += p.abs }
 
@@ -69,7 +79,7 @@ module CoinsHelper
   def insert_43_min_trend_of( coin, prices )
     trends = get_trend_change_of( prices, 10 )
       
-    coin.store('trend', analyze_43m_market( trends ) )
+    coin.store( 'trend', analyze_43m_market( trends ) )
    
     coin
   end
@@ -98,6 +108,7 @@ module CoinsHelper
     head = trend[-1]
 
     time_difference = time_difference_of( tail, head )
+    
     # this part starting here is complicated but it works
     change = ( percentage_between( price_of( tail ), price_of( head ) ) - 100 ) / time_difference
 
@@ -172,6 +183,7 @@ module CoinsHelper
       insert_15m_price_trajectory_of( coin, prices )
     end
     insert_trade_grade_of( coins )
+    
     coins
   end
 end

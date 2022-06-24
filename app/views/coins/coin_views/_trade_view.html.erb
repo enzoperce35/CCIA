@@ -58,9 +58,10 @@
           <%= link_to coin_path(user_coin), method: 'get' do %>
             <em style="font-size: smaller; margin-top: 0%"><%= coin['id'] %></em>
           <% end %>
-          <% trade_grade = coin['id'] == trade_coin['id'] ? 100 - coin[ 'trade_grade' ] : coin[ 'trade_grade' ] %>
+
+          <% trade_grade = @market_status >= 70 ? coin[ 'trade_grade' ] - 10 :  coin[ 'trade_grade' ] %>
           
-          <em style="font-size: smaller; color: maroon; margin-top: 0%"><%= ' ( ' + "#{ trade_grade.round(2) }" + ' )' %></em>
+          <em style="font-size: smaller; color: maroon; margin-top: 0%"><%= ' ( ' + trade_grade.round(2).to_s  + ' )' %></em>
 
           <hr style="margin-top: 3px; margin-bottom: 0%; width: 70px" >
 

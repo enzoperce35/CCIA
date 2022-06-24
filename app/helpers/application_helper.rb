@@ -35,7 +35,7 @@ module ApplicationHelper
     return 'N/A' if !trade_price.is_a?( Float )
     
     [ humanize_price( 105.percent_of( trade_price ).round( count_decimals( trade_price ) ) ),
-      humanize_price( 90.percent_of( trade_price ).round( count_decimals( trade_price ) ) ) ]
+      humanize_price( 97.percent_of( trade_price ).round( count_decimals( trade_price ) ) ) ]
   end
 
   def find_focus

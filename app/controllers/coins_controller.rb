@@ -28,6 +28,8 @@ class CoinsController < ApplicationController
     @coin_ids = fetch_user_coins( @user_view, @trade_coin )
 
     @coins = helpers.insert_extra_values_from( @coin_ids, helpers.client )
+
+    @market_status = helpers.market_status_of( @coins )
     
     @timer = set_timer_for( @coins )
   end
