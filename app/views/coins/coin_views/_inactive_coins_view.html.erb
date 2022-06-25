@@ -1,7 +1,7 @@
 <% coins = @coins.sort_by { | k | k[ 'trade_grade' ] }.reverse %>
 
 <div style="float: right;">
-  <%= link_to "\uE241".encode('utf-8'), root_path( actives: true ), method: 'get' %>
+  <%= link_to "\u{1F534}".encode('utf-8'), root_path( actives: true ), method: 'get' %>
 </div>
 
 <table class = 'table'>

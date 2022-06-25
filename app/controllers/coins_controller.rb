@@ -82,8 +82,8 @@ class CoinsController < ApplicationController
     buy = helpers.user( params[ :buy ] )
     sell = helpers.user( params[ :sell ])
 
-    buy.update( fuse_count: buy.fuse_count += 1, usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ))
-    sell.update( fuse_count: sell.fuse_count -= 1, is_observed: true)
+    buy.update( fuse_count: buy.fuse_count += 1, short_gain: helpers.current_price_of( buy.coin_id ), usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ))
+    sell.update( fuse_count: sell.fuse_count -= 1, short_gain: helpers.current_price_of( sell.coin_id ), is_observed: true)
 
     high, low = helpers.generate_margins( buy )
 
@@ -135,7 +135,13 @@ class CoinsController < ApplicationController
     when 'inactive_coins_view'
       Coin.inactive.pluck( 'coin_id' ).join(', ')
     when 'trade_view'
-      Coin.idle.pluck( 'coin_id' ).push( @trade_coin ).join(', ')
+      trade_coin = helpers.user( @trade_coin )
+      
+      if trade_coin.coin_type == 'stablecoin'
+        Coin.idle.where.not( coin_type: 'stablecoin').pluck( 'coin_id' ).push( @trade_coin ).join(', ')
+      else
+        Coin.idle.pluck( 'coin_id' ).push( @trade_coin ).join(', ')
+      end
     else
       ( Coin.owned + Coin.observed ).pluck( 'coin_id' ).join(', ')
     end
@@ -160,7 +166,7 @@ class CoinsController < ApplicationController
     coins.each do |coin|
       coin = Coin.find_by( coin_id: coin )
 
-      next if helpers.is_user_owned?( coin )
+      next if helpers.is_user_owned?( coin ) || coin.coin_type == 'stablecoin'
 
       coin.update( is_observed: coin.is_observed? ? false : true )
     end

@@ -27,6 +27,28 @@ module ApplicationHelper
     zeros + 4
   end
 
+  def button_color( status )
+    case status
+    when 'bearish'
+      "btn btn-outline-danger btn-sm"
+    when 'bullish'
+      "btn btn-outline-success btn-sm"
+    else
+      "btn btn-outline-warning btn-sm"
+    end
+  end
+
+  def border_color( status )
+    case status
+    when 'bearish'
+      '1.2px solid red'
+    when 'bullish'
+      '1.2px solid green'
+    else
+      '1px solid'
+    end
+  end
+
   def generate_margins( coin )
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
 
