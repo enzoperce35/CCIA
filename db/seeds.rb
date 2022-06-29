@@ -35,6 +35,10 @@ puts 'seeding...'
   Coin.create(coin_id: 'bella-protocol', coin_type: 'shitcoin', is_active: false )
   Coin.create(coin_id: 'mines-of-dalarnia', coin_type: 'shitcoin', is_active: false )
 
+  MarketRun.create( name: 'bullish' )
+  MarketRun.create( name: 'bearish' )
+  MarketRun.create( name: 'normal' )
+
   coin_ids = Coin.where( is_active: true ).pluck( 'coin_id' ).join(', ')
   coins = CoingeckoRuby::Client.new.markets( coin_ids, vs_currency: 'php' )
 

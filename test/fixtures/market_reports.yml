@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  started: 
+  bullish: 1
+  bearish: 1
+
+two:
+  started: 
+  bullish: 1
+  bearish: 1

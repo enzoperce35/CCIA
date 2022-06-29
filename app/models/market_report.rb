@@ -1,0 +1,2 @@
+class MarketReport < ApplicationRecord
+end

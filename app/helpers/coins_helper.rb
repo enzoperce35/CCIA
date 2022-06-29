@@ -1,32 +1,4 @@
 module CoinsHelper
-
-  def analyze_market( coins, dumps = 0, pumps = 0 )
-    coins.each do | coin |
-      latest_trend = coin[ 'trend' ][ -1 ]
-
-      if latest_trend < 0
-        dumps += 1
-      elsif latest_trend > 0
-        pumps += 1
-      end
-    end
-
-    pumps > dumps ? [ 'pump', pumps.to_f ] : [ 'dump', dumps.to_f ]
-  end
-
-  def market_status_of( coins )
-    state, value = analyze_market( coins )
-    
-    value = ( value / coins.count.to_f ) * 100
-
-    if state == 'pump' && value >= 68
-      'bullish'
-    elsif state == 'dump' && value >= 68
-      'bearish'
-    else
-      'normal'
-    end
-  end
   
   def sum_price_changes(prices, x = 0)
     prices.each { |p| x += p.abs }

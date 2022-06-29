@@ -7,6 +7,60 @@ class Numeric
 end
 
 module ApplicationHelper
+  def cast_report( record, time_covered )
+    if record.bullish > 0 && record.bearish > 0
+      "detected #{ record.bullish } bull runs and #{ record.bearish } bear runs from the last #{ time_covered } minutes"
+    elsif record.bullish > 0
+      "detected #{ record.bullish } bull runs from the last #{ time_covered } minutes"
+    elsif record.bearish > 0
+      "detected #{ record.bearish } bear runs from the last #{ time_covered } minutes"
+    else
+      "market is normal for the last #{ time_covered } minutes"
+    end
+  end
+  
+  def update_report( record, status )
+    return nil if status[ 'warmth' ] != 3
+    
+    case status[ 'current_status' ]
+    when 'bullish'
+      record.update( bullish: record.bullish += 1 )
+    when 'bearish'
+      record.update( bearish: record.bearish += 1 )
+    end
+  end
+
+  def record_current( status )
+    record = MarketReport.first_or_create
+    time_covered = minute_difference_of( DateTime.now.utc, record.created_at )
+    
+    if status[ 'steady_market?' ] && time_covered > 5
+      record.update( reported: true )
+         
+      cast_report( record, time_covered )
+    else
+      record.reported ? record.delete : update_report( record, status )
+      
+      ''
+    end
+  end
+
+  def selected_for_trade?( coin, market_status, index )
+    return false if market_status[ 'steady_market?' ] == false
+    return false if  index == 0
+
+    trade_grade = coin[ 'trade_grade' ]
+    indicator, trajectory = coin[ 'trajectory' ]
+
+    trade_grade > 75 && indicator == 'green' && trajectory >= 0.02
+  end
+
+  def minute_difference_of( time_a, time_b )
+    time_b = DateTime.now.utc if time_b.nil?  #for development only, not necessary for production
+    
+    ( ( time_a.to_time.to_i - time_b.to_time.to_i ) / 60 ).round
+  end
+  
   def scientific_notation?(number)  #inactive
     number.to_s.include?('-')
   end

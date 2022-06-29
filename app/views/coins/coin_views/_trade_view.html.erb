@@ -1,6 +1,10 @@
 <% coins = filter_trade( @coins, @trade_coin ) %>
 <% trade_coin = coins.first %>
-<% border_color = border_color( @market_status )%>
+<% market_status = @market_status[ 'current_status' ] %>
+<% border_color = border_color( market_status )%>
+<% trade_available = '' %>
+
+<%= record_current( @market_status ) %>
 
 <table class = 'table'>
 
@@ -8,7 +12,18 @@
     <h4>
       <%= ( trade_coin['name'] + ' trade  ' ).titleize %>
       <img style="width: 40px;" src=<%= trade_coin['image']%>>
+      
+      <em id='notifier' hidden='true'>
+        <%= "\u{1F7E5}".encode( 'utf-8') %>
+      </em>
     </h4>
+
+    <div style="float:right;">
+      <em style="font-style:italic; font-weight:bold; color: black"><%= @market_status[ 'duration' ].to_s + 'm' %>
+      <em style="font-style:italic; font-weight:bold; color: green"><%= @market_status[ 'bull_runs' ].to_s %></em>
+      <em style="font-style:italic; font-weight:bold; color: black">:</em>
+      <em style="font-style:italic; font-weight:bold; color: red"><%= @market_status[ 'bear_runs' ].to_s %></em>
+    </div>
   </caption>
   
   <thead>
@@ -23,6 +38,8 @@
     <% user_coin = user(coin) %>
     <% long_gain = coin[ 'long_gain' ] %>
     <% short_gain = coin[ 'short_gain' ] %>
+    <% selected = selected_for_trade?( coin, @market_status, index ) %>
+    <% trade_available = 'true' if selected %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -30,7 +47,8 @@
     <% index = index.to_s %>
     
     <tbody>
-      <tr id="<%= coin['id'] %>">
+      <% tr_bg = 'background-color:' + ( selected ? 'darkseagreen;' : '' ) %>
+      <tr id="<%= coin['id'] %>" style=<%= tr_bg %>>
         <td style="font-size: smaller;">
           <div style="font-size: smaller;">
             <% if long_gain == 'N/A' %>
@@ -121,7 +139,7 @@
         <td>
           <% unless coin['id'] == @trade_coin %>
             <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: 'Are you sure you want to trade these coins?' } do %>
-              <button  type="button" class="<%= button_color( @market_status) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
+              <button  type="button" class="<%= button_color( market_status) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>
                 <img src=<%= coin['image']%> style="width: 21px">
@@ -147,5 +165,17 @@
     <%= render 'coins/view_functions/price_indicator' %>
   <% end %>
 </table>
+
+<script>
+  function show() {
+    var notifier = document.getElementById("notifier");
+    
+    if ( '<%= trade_available %>' === 'true' ) {
+      notifier.hidden = false;
+    }
+  }
+
+  show()
+</script>
 
 <%= render 'coins/view_functions/auto_refresh' %>
