@@ -1,4 +1,4 @@
-module Run
+module MarketStatus
   def market_is_steady?
     MarketRun.warm.count.zero?
   end

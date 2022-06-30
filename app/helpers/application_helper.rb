@@ -31,6 +31,8 @@ module ApplicationHelper
   end
 
   def record_current( status )
+    MarketReport.first.delete if status[ 'duration' ] < 1
+    
     record = MarketReport.first_or_create
     time_covered = minute_difference_of( DateTime.now.utc, record.created_at )
     
@@ -56,8 +58,6 @@ module ApplicationHelper
   end
 
   def minute_difference_of( time_a, time_b )
-    time_b = DateTime.now.utc if time_b.nil?  #for development only, not necessary for production
-    
     ( ( time_a.to_time.to_i - time_b.to_time.to_i ) / 60 ).round
   end
   

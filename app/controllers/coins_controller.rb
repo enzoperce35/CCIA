@@ -1,9 +1,9 @@
-require 'coin_modules/market_run.rb'
+require 'coin_modules/market_status.rb'
 require 'coin_modules/view_coins.rb'
 
 class CoinsController < ApplicationController
 
-  include ViewCoins, Run
+  include ViewCoins, MarketStatus
   
   def new
     @coin = Coin.new
@@ -132,7 +132,7 @@ class CoinsController < ApplicationController
   end
 
   def set_timer_for( coins )
-    coins.is_a?( String ) ? 10000 : coins.count * 3
+    coins.is_a?( String ) ? 10000 : coins.count * 2.5
   end
 
   def change_observation_status_of( coins )
