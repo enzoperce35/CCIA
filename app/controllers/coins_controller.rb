@@ -3,7 +3,8 @@ require 'coin_modules/view_coins.rb'
 
 class CoinsController < ApplicationController
 
-  include ViewCoins, MarketStatus
+  include CoinModules::ViewCoins
+  include CoinModules::MarketStatus
   
   def new
     @coin = Coin.new
