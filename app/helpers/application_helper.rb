@@ -7,6 +7,39 @@ class Numeric
 end
 
 module ApplicationHelper
+  def total_price_changes( market_coins, pos = [], neg = [] )
+    market_coins = market_coins.reject { | c | user( c ).coin_type == 'stablecoin' }
+
+    market_coins.each { | m | m[ 'price_change_percentage_24h' ] > 0 ? pos << m[ 'price_change_percentage_24h' ] : neg << m[ 'price_change_percentage_24h' ] }
+
+    ( (pos.sum - neg.sum.abs) / market_coins.count ) + 2
+  end
+
+  def score_move( moves, m1 = 0, m2 = 0 )
+    return 0 if moves.count <= 1
+    
+    m1 += moves[0] > moves[1] ? 0 : 1
+    
+    if moves.count == 3
+      m2 += moves[1] > moves[2] ? 0 : 2
+    end
+    
+    m1 + m2
+  end
+  
+  def run_scores( runs = {} )
+    market_runs = MarketRun.where.not( name: 'normal' )
+
+    market_runs.each do | run |
+      movement = run.movement.chunk_while(&:==).map(&:first)
+
+      movement = movement[-3..-1] if movement.count >= 3
+
+      runs.store( run.name, score_move( movement ) )
+    end
+    runs
+  end
+  
   def cast_report( record, time_covered )
     if record.bullish > 0 && record.bearish > 0
       "detected #{ record.bullish } bull runs and #{ record.bearish } bear runs from the last #{ time_covered } minutes"
@@ -31,7 +64,7 @@ module ApplicationHelper
   end
 
   def record_current( status )
-    MarketReport.first.delete if status[ 'duration' ] < 1
+    MarketReport.first.delete if !MarketReport.first.nil? && status[ 'duration' ] < 1
     
     record = MarketReport.first_or_create
     time_covered = minute_difference_of( DateTime.now.utc, record.created_at )
@@ -51,10 +84,11 @@ module ApplicationHelper
     return false if market_status[ 'steady_market?' ] == false
     return false if  index == 0
 
-    trade_grade = coin[ 'trade_grade' ]
-    indicator, trajectory = coin[ 'trajectory' ]
+    trajectory = coin.keys[ 33 ]
 
-    trade_grade > 75 && indicator == 'green' && trajectory >= 0.02
+    trade_grade = coin[ 'trade_grade' ]
+
+    trade_grade > 75 && [ 'solid upward', 'upward', 'broken down' ].include?( trajectory )
   end
 
   def minute_difference_of( time_a, time_b )
@@ -103,14 +137,14 @@ module ApplicationHelper
     end
   end
 
-  def generate_margins( coin )
+  def generate_margins( coin, take_profit )
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
 
     trade_price = coin.usd_trade_price
 
     return 'N/A' if !trade_price.is_a?( Float )
     
-    [ humanize_price( 105.percent_of( trade_price ).round( count_decimals( trade_price ) ) ),
+    [ humanize_price( ( 100 + take_profit ).percent_of( trade_price ).round( count_decimals( trade_price ) ) ),
       humanize_price( 97.percent_of( trade_price ).round( count_decimals( trade_price ) ) ) ]
   end
 
@@ -124,33 +158,8 @@ module ApplicationHelper
     user_coins[ middle_coin ].coin_id
   end
 
-  def price_of( trend, index = nil )
-    if index.nil?
-      trend[ 1 ]
-    else
-      trend[ index ][1]
-    end
-  end
-
   def value_color( value )
     value < 0 ? 'red' : 'green'
-  end
-  
-  def current_price_of(coin, currency = 'php' )
-    case coin
-    when String
-      market( coin, currency )['current_price'].to_f
-    else
-      coin['current_price'].to_f
-    end
-  end
-
-  def low_24h(coin)
-    coin['low_24h']
-  end
-  
-  def high_24h(coin)
-    coin['high_24h']
   end
 
   def no_user_coin_yet?
@@ -161,16 +170,15 @@ module ApplicationHelper
     coins.is_a?( String )
   end
 
-  def is_user_owned?( coin )
-    coin.fuse_count > 0
-  end
-
-  def percentage_between(price_a, price_b)
+  def percentage_between( price_a, price_b )
     ((price_a.to_f / price_b.to_f)  * 100).round(2)
   end
 
-  def show_ids( coin )
-    "#{ coin.coin_name }(#{ coin.coin_sym })"
+  def time_difference_of( time_a, time_b )
+    time_a = Time.parse( DateTime.strptime( time_a[0].to_s, "%Q" ).to_s )
+    time_b = Time.parse( DateTime.strptime( time_b[0].to_s, "%Q" ).to_s )
+
+    (time_b - time_a) / 60
   end
 
   def assemble(list)
@@ -179,12 +187,6 @@ module ApplicationHelper
 
       [name, h['id']]
     end
-  end
-
-  def user(coin)
-    coin_id = coin.is_a?( String ) ? coin : coin[ 'id' ]
-    
-    Coin.find_by(coin_id: coin_id) 
   end
 
   def market( user_coin, currency = 'php' )

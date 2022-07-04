@@ -13,6 +13,7 @@ module CoinModules
           Coin.idle.where.not( coin_type: 'stablecoin').pluck( 'coin_id' ).push( @trade_coin ).join(', ')
         else
           Coin.idle.pluck( 'coin_id' ).push( @trade_coin ).join(', ')
+          #Coin.idle.pluck( 'coin_id' )[0..4].push( @trade_coin ).join(', ')
         end
       else
         ( Coin.owned + Coin.observed ).pluck( 'coin_id' ).join(', ')

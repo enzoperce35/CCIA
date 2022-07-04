@@ -1,9 +1,7 @@
-require 'coin_modules/market_status.rb'
-require 'coin_modules/view_coins.rb'
-
 class CoinsController < ApplicationController
 
   include CoinModules::ViewCoins
+  include CoinModules::ExtraValues
   include CoinModules::MarketStatus
   
   def new
@@ -34,10 +32,10 @@ class CoinsController < ApplicationController
 
     @coin_ids = fetch_user_coins( @user_view, @trade_coin )
 
-    @coins = helpers.insert_extra_values_from( @coin_ids, helpers.client )
+    @coins = insert_extra_values_from( @coin_ids, helpers.client )
     
     @market_status = analyze_current_market_of( @coins ) if @user_view == 'trade_view'
-    
+
     @timer = set_timer_for( @coins )
   end
 
@@ -88,11 +86,12 @@ class CoinsController < ApplicationController
   def make_trade
     buy = helpers.user( params[ :buy ] )
     sell = helpers.user( params[ :sell ])
+    take_profit =  params[ :price_change ].to_i + 2
 
     buy.update( fuse_count: buy.fuse_count += 1, short_gain: helpers.current_price_of( buy.coin_id ), usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ))
     sell.update( fuse_count: sell.fuse_count -= 1, short_gain: helpers.current_price_of( sell.coin_id ), is_observed: true)
 
-    high, low = helpers.generate_margins( buy )
+    high, low = helpers.generate_margins( buy, take_profit )
 
     redirect_to root_path, method: 'get', notice: "set #{ buy.coin_sym }: high => #{ high } - low => #{ low }" 
   end

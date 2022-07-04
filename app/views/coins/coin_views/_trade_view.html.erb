@@ -8,7 +8,7 @@
 
 <table class = 'table'>
 
-  <caption id='caption'>
+  <caption id='caption' style="padding: 0%">
     <h4>
       <%= ( trade_coin['name'] + ' trade  ' ).titleize %>
       <img style="width: 40px;" src=<%= trade_coin['image']%>>
@@ -18,11 +18,27 @@
       </em>
     </h4>
 
-    <div style="float:right;">
-      <em style="font-style:italic; font-weight:bold; color: black"><%= @market_status[ 'duration' ].to_s + 'm' %>
-      <em style="font-style:italic; font-weight:bold; color: green"><%= @market_status[ 'bull_runs' ].to_s %></em>
-      <em style="font-style:italic; font-weight:bold; color: black">:</em>
-      <em style="font-style:italic; font-weight:bold; color: red"><%= @market_status[ 'bear_runs' ].to_s %></em>
+    <div style="float:right">
+      <% possible_runs = run_scores %>
+      
+      <div class="progress" style="width: 67px; height: 3px" >
+        <% bull = "width:" + percentage_between( possible_runs[ 'bullish' ], 3 ).to_s + '%;' %>
+
+        <div class="progress-bar bg-success" style=<%= bull %> role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      
+      <div>
+        <em style="font-style:italic; font-weight:bold; color: black"><%= @market_status[ 'duration' ].to_s + 'm' %>
+        <em style="font-style:italic; font-weight:bold; color: green"><%= @market_status[ 'bull_runs' ].to_s %></em>
+        <em style="font-style:italic; font-weight:bold; color: black">:</em>
+        <em style="font-style:italic; font-weight:bold; color: red"><%= @market_status[ 'bear_runs' ].to_s %></em>
+      </div>
+      
+      <div class="progress" style="width: 67px; height: 3px" >
+        <% bear = "width:" + percentage_between( possible_runs[ 'bearish' ], 3 ).to_s + '%;' %>
+
+        <div class="progress-bar bg-danger" style=<%= bear %> role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
     </div>
   </caption>
   
@@ -40,6 +56,8 @@
     <% short_gain = coin[ 'short_gain' ] %>
     <% selected = selected_for_trade?( coin, @market_status, index ) %>
     <% trade_available = 'true' if selected %>
+    <% price_change = coin[ 'market_cap_change_percentage_24h'] %>
+    <% trajectory = coin.values[33] %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -87,11 +105,11 @@
               <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
            </em>
 
-            <% color = "color:" + coin['trajectory'][0] + ";" + "font-size:" + "7px" %>
-            <% prefix = coin['trajectory'][0] == 'green' ? ' + ' : ' - ' %>
+            <% color = "color:" + trajectory[0] + ";" + "font-size:" + "7px" %>
+            <% prefix = trajectory[0] == 'green' ? ' + ' : ' - ' %>
             
             <em style=<%= color %>>
-              <%= prefix + coin['trajectory'][1].round(2).to_s + "% " + " / m" %>
+              <%= prefix + trajectory[1].round(2).to_s + "% " + " / m" %>
             </em>
           </div>
         </td>
@@ -138,7 +156,7 @@
 
         <td>
           <% unless coin['id'] == @trade_coin %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: 'Are you sure you want to trade these coins?' } do %>
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, price_change: price_change ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, profit take is #{ price_change + 2 }." } do %>
               <button  type="button" class="<%= button_color( market_status) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>

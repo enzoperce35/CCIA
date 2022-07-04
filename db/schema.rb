@@ -29,6 +29,9 @@ ActiveRecord::Schema.define(version: 2022_06_28_105043) do
     t.integer "fuse_count", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "observed?", default: false
+    t.float "observed_price"
+    t.float "on_hold"
   end
 
   create_table "market_reports", force: :cascade do |t|
@@ -44,6 +47,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_105043) do
     t.integer "warmth", default: 0
     t.integer "runs", default: 0
     t.datetime "started"
+    t.text "movement", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
