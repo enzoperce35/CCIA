@@ -7,10 +7,10 @@ class Numeric
 end
 
 module ApplicationHelper
-  def total_price_changes( market_coins, pos = [], neg = [] )
+  def average_price_change( market_coins, pos = [], neg = [] )
     market_coins = market_coins.reject { | c | user( c ).coin_type == 'stablecoin' }
 
-    market_coins.each { | m | m[ 'price_change_percentage_24h' ] > 0 ? pos << m[ 'price_change_percentage_24h' ] : neg << m[ 'price_change_percentage_24h' ] }
+    market_coins.each { | m | m[ 'market_cap_change_percentage_24h' ] > 0 ? pos << m[ 'market_cap_change_percentage_24h' ] : neg << m[ 'market_cap_change_percentage_24h' ] }
 
     ( (pos.sum - neg.sum.abs) / market_coins.count ) + 2
   end
@@ -115,14 +115,15 @@ module ApplicationHelper
     zeros + 4
   end
 
-  def button_color( status )
-    case status
-    when 'bearish'
-      "btn btn-outline-danger btn-sm"
-    when 'bullish'
+  def button_color( coin )
+    trajectory = coin.keys[ 33 ]
+  
+    if [ 'solid upward', 'upward', 'broken down' ].include?( trajectory )
       "btn btn-outline-success btn-sm"
+    elsif [ 'solid downward', 'downward', 'broken up' ].include?( trajectory )
+      "btn btn-outline-danger btn-sm"
     else
-      "btn btn-outline-warning btn-sm"
+      "btn btn-outline-dark btn-sm"
     end
   end
 

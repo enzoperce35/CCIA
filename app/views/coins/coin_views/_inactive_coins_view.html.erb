@@ -44,11 +44,11 @@
                <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
             </em>
  
-            <% color = "color:" + coin['trajectory'][0] + ";" + "font-size:" + "7px" %>
-            <% prefix = coin['trajectory'][0] == 'green' ? ' + ' : ' - ' %>
+            <% color = "color:" + coin.values[ 33 ][0] + ";" + "font-size:" + "7px" %>
+            <% prefix = coin.values[ 33 ][0] == 'green' ? ' + ' : ' - ' %>
              
             <em style=<%= color %>>
-              <%= prefix + coin['trajectory'][1].round(2).to_s + "% " + " / m" %>
+              <%= prefix + coin.values[ 33 ][1].round(2).to_s + "% " + " / m" %>
             </em>
           </div>
         </td>

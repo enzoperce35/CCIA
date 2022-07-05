@@ -2,9 +2,8 @@
 <% trade_coin = coins.first %>
 <% market_status = @market_status[ 'current_status' ] %>
 <% border_color = border_color( market_status )%>
+<% atp = average_price_change( coins ) %>
 <% trade_available = '' %>
-
-<%= record_current( @market_status ) %>
 
 <table class = 'table'>
 
@@ -155,9 +154,13 @@
         </td>
 
         <td>
-          <% unless coin['id'] == @trade_coin %>
+          <% if coin['id'] == @trade_coin %>
+            <em style="float: right; margin-top: 18px; margin-right:5px; font-size:small">
+              ATP: <%= atp.round( 2 ) %>
+            </em>
+          <% else %>
             <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, price_change: price_change ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, profit take is #{ price_change + 2 }." } do %>
-              <button  type="button" class="<%= button_color( market_status) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
+              <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>
                 <img src=<%= coin['image']%> style="width: 21px">
