@@ -15,6 +15,7 @@
   
   <% all_coins.each_with_index do |coin, index| %>
     <% user_coin = user(coin) %>
+    <% changes_45m = trend_changes_of( coin, '45m' ) %>
     <% long_gain = coin['long_gain'] %>
     <% short_gain = coin['short_gain'] %>
     
@@ -47,9 +48,9 @@
               </div>
           
               <div class="my-grid" >
-                <% trend_sum = sum_price_changes( coin['trend'] ) %>
+                <% trend_sum = sum_price_changes( changes_45m ) %>
             
-                <% coin['trend'].each_with_index do |trend, index| %>
+                <% changes_45m.each_with_index do |trend, index| %>
                   <% trend_change = percentage_between( trend.abs, trend_sum ) %>
               
                   <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>

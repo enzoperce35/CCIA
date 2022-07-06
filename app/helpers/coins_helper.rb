@@ -29,7 +29,7 @@ module CoinsHelper
     Coin.find_by(coin_id: coin_id) 
   end
 
-  def current_price_of(coin, currency = 'php' )
+  def current_price_of( coin, currency = 'usd' )
     case coin
     when String
       market( coin, currency )['current_price'].to_f

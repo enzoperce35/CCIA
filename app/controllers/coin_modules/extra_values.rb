@@ -1,9 +1,24 @@
 module CoinModules 
   module ExtraValues
+    def dump_grade_in( changes, total = 0, dumps = 0 )
+      changes.each do | change |
+        total += change.abs
+        dumps += change.abs if change < 0
+      end
+
+      helpers.percentage_between( dumps, total )
+    end
+    
+    def get_trend_change_of( prices, count )
+      count -= count * 2 + 1
+    
+      prices['prices'][count..-1]
+    end
+
     def insert_trade_grade_of( coins )
       coins.each_with_index do |coin|
-        grade_a = coin[ 'score_8h' ]
-        grade_b = coin[ 'score_30m' ]
+        grade_a = coin[ 'trend_8h' ][ 'dump_grade' ]
+        grade_b = coin[ 'trend_45m' ][ 'dump_grade_30m' ]
 
         total = ( grade_a * 0.30 ) + ( grade_b * 0.70 )
 
@@ -11,7 +26,38 @@ module CoinModules
       end
     end
 
-    def analyze_43m_market( trends, arr = [] )
+    def score_15m_trajectory_of( prices, score = 0 )
+      prices.each_with_index do | price, index | 
+        next if index == 0
+    
+        price_a = prices[ index-1 ][1]
+    
+        price_b = price[1]
+
+        if index == 1 && price_b > price_a
+          score += 1
+        elsif index == 2 && price_b > price_a
+          score += 2
+        end
+      end
+      
+      score
+    end
+
+    def second_difference_of( last_timestamp )
+      time_a = Time.parse( DateTime.strptime( last_timestamp.to_s, "%Q" ).to_s )
+      time_b = Time.parse( DateTime.now.utc.to_s )
+
+      time_b - time_a
+    end
+
+    def insert_history_vs_current_price( coin, prices )
+      last_timestamp, last_price = prices['prices'][-1]
+
+      coin.store( 'last_trend', { 'time_mark' => second_difference_of( last_timestamp ), 'price' => last_price } )
+    end
+
+    def market_45m_changes( trends, arr = [] )
       trends.each_with_index do | trend, index |
         next if index == 0
     
@@ -24,149 +70,48 @@ module CoinModules
       arr
     end
 
-    def price_of( trend, index = nil )
-      if index.nil?
-        trend[ 1 ]
-      else
-        trend[ index ][1]
-      end
+    def insert_45_min_trend_of( coin, prices )
+      trend = get_trend_change_of( prices, 10 )
+
+      trend_changes = market_45m_changes( trend )
+      
+      coin.store( 'trend_45m', { 'changes' => trend_changes,
+                                 'last_change' => trend_changes[-1],
+                                 'dump_grade_30m' => dump_grade_in( trend_changes[0..6] ),
+                                 'trajectory_15m' => score_15m_trajectory_of( trend[8..-1] ) } )
     end
 
-    def analyze_8h_market( trends, arr = [] )
+    def market_8h_changes( trends, arr = [] )
       trends = trends.each_slice(10).to_a
 
-      trends.each do |trend|
-        tail = price_of( trend, 0 )
-        head = price_of( trend, -1 )
+      trends.each do | trend |
+        tail = trend[0][1]
+        head = trend[-1][1]
 
         arr <<  helpers.percentage_between( head, tail ) - 100
       end
       arr
     end
-
-    def get_trend_change_of( prices, count )
-      count -= count * 2 + 1
     
-      prices['prices'][count..-1]
-    end
-
     def insert_8_hr_trend_of( coin, prices )
       trends = get_trend_change_of( prices, 99 )
+
+      trend_changes = market_8h_changes( trends )
     
-      coin.store('trend_8h', analyze_8h_market( trends ) )
-   
-      coin
+      coin.store( 'trend_8h', { 'changes' => trend_changes, 'dump_grade' => dump_grade_in( trend_changes ) } )
     end
-  
-    def insert_43_min_trend_of( coin, prices )
-      trends = get_trend_change_of( prices, 10 )
+    
+    def insert_coin_gains( market_coin, gains = [ 'long_gain', 'short_gain' ] )
+      return nil if gains.count.zero?
       
-      coin.store( 'trend', analyze_43m_market( trends ) )
-   
-      coin
-    end
-
-    def sum_score_of( changes, total = 0, dumps = 0 )
-      changes.each do | change |
-        total += change.abs
-        dumps += change.abs if change < 0
-      end
-
-      helpers.percentage_between(dumps, total)
-    end
-
-    def time_difference_of( time_a, time_b )
-      time_a = Time.parse( DateTime.strptime( time_a[0].to_s, "%Q" ).to_s )
-      time_b = Time.parse( DateTime.strptime( time_b[0].to_s, "%Q" ).to_s )
-
-      (time_b - time_a) / 60
-    end
-
-    def analyze_trajectory( patterns )
-
-      case patterns.join
-      when 'upupup'
-        'solid upward'
-      when 'downdowndown'
-        'solid downward'
-      when'downupup'
-        'upward'
-      when 'updowndown'
-        'downward'
-      when 'upupdown'
-        'broken up'
-      when 'downwdownup'
-        'broken down'
-      else
-        'volatile'
-      end
-    end
-
-    def analyze_trend( prices, patterns = [] )
-      prices.each_with_index do | price, index | 
-        next if index == 0
-    
-        price_a = prices[ index-1 ][1]
-    
-        price_b = price[1]
-
-        traj = 
-          if price_a > price_b
-            'down'
-          elsif price_a < price_b
-            'up'
-          else
-            'even'
-          end
-
-        patterns << traj
-      end
-
-      analyze_trajectory( patterns )
-    end
-
-    # average duration of 3 trends is '9 - 10 min', coingecko price info delay avg is '5 min'
-    def insert_15m_price_trajectory_of( coin, prices )
-      trend = get_trend_change_of( prices, 3 )
-
-      tail = trend[1]
-      head = trend[-1]
-
-      time_difference = time_difference_of( tail, head )
-    
-      # this part starting here is complicated but it works
-      change = ( helpers.percentage_between( price_of( tail ), price_of( head ) ) - 100 ) / time_difference
-
-      indicator = change < 0 ? 'green' : 'red'
-
-      coin.store( analyze_trend( trend ), [ indicator, change.abs ] )
-    end
-
-    def insert_analysis_of_8h_trend_of( coin )
-        changes = coin['trend_8h']
-    
-        coin.store( 'score_8h', sum_score_of( changes ) )
-      end
+      gain = gains.pop
       
-      def insert_analysis_of_30m_trend_of( coin )
-        changes = coin['trend'][0..6]
-    
-        coin.store( 'score_30m', sum_score_of( changes ) )
-      end
-
-    def gain_of( market_coin, user_price )
-      helpers.percentage_between( helpers.current_price_of( market_coin ), user_price ) - 100
-    end
-    
-    def insert_coin_gain( market_coin, gain = '' )
       user_coin = helpers.user( market_coin )
-      user_price = gain == 'long' ? user_coin.long_gain : user_coin.short_gain
+      user_price = gain == 'long_gain' ? user_coin.long_gain : user_coin.short_gain
         
-      if user_price.nil?
-        market_coin.store( "#{ gain }_gain", 'N/A' )
-      else
-        market_coin.store( "#{ gain }_gain", gain_of( market_coin, user_price ) )
-      end
+      market_coin.store( gain, user_price.nil? ? 'N/A' : helpers.percentage_between( market_coin[ 'current_price' ], user_price ) - 100 )
+
+      insert_coin_gains( market_coin, gains )
     end  
       
     def get_difference( high, low, current )
@@ -176,17 +121,9 @@ module CoinModules
   
       helpers.percentage_between(current, range)
     end
-
-    def low_24h(coin)
-      coin['low_24h']
-    end
-  
-    def high_24h(coin)
-      coin['high_24h']
-    end
-  
+    
     def insert_current_vs_24h_prices_of( coin )
-      difference = get_difference( high_24h( coin ), low_24h( coin ), helpers.current_price_of( coin ) )
+      difference = get_difference( coin[ 'high_24h' ], coin[ 'low_24h' ], helpers.current_price_of( coin ) )
   
       coin.store( "vs_24h", difference )
     end
@@ -201,24 +138,17 @@ module CoinModules
       
         insert_current_vs_24h_prices_of( coin )
       
-        insert_coin_gain( coin, 'long' )
+        insert_coin_gains( coin )
       
-        insert_coin_gain( coin, 'short' )
-
         insert_8_hr_trend_of( coin, prices )
       
-        insert_43_min_trend_of( coin, prices )
-      
-        insert_analysis_of_30m_trend_of( coin )
-      
-        insert_analysis_of_8h_trend_of( coin )
+        insert_45_min_trend_of( coin, prices )
 
-        insert_15m_price_trajectory_of( coin, prices )
+        insert_history_vs_current_price( coin, prices )
       end
       insert_trade_grade_of( coins )
       
       coins
-  end
-      
+    end
   end 
 end

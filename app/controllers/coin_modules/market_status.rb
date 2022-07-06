@@ -103,7 +103,7 @@ module CoinModules
       
       cool_down( opposed_market_statuses )
 
-      monitor_movement( new_status ) # this is working, just need to be implemented in views :)
+      monitor_movement( new_status )
   
       { 'current_status' => market_status.name,
         'warmth' => market_status.warmth,
@@ -113,24 +113,20 @@ module CoinModules
         'bull_runs' => MarketRun.find_by( name: 'bullish' ).runs }
     end
 
-    def analyze_market( coins, dumps = 0, pumps = 0 )
-      coins.each do | coin |
-        trajectory = coin.keys[ 33 ]
-  
-        if [ 'solid upward', 'upward', 'broken down' ].include?( trajectory )
-          pumps += 1
-        elsif [ 'solid downward', 'downward', 'broken up' ].include?( trajectory )
-          dumps += 1
-        end
-      end
-
-      { 'pumps' => pumps, 'dumps' => dumps }
-    end
-  
     def state_percentage( value, coins )
       state_margin = 68.percent_of( coins.count )
       
       ( value / state_margin ) * 100
+    end
+
+    def analyze_market( coins, dumps = 0, pumps = 0 )
+      coins.each do | coin |
+        last_change = coin[ 'trend_45m' ][ 'last_change' ]
+  
+        last_change < 0 ? dumps += 1 : pumps +=1
+      end
+
+      { 'pumps' => pumps, 'dumps' => dumps }
     end
   
     def market_status_of( coins )

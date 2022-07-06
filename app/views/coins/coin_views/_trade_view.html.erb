@@ -51,12 +51,13 @@
   
   <% coins.each_with_index do |coin, index| %>
     <% user_coin = user(coin) %>
+    <% trend_8h = trend_changes_of( coin, '8hr' ) %>
+    <% trend_45m = trend_changes_of( coin, '45m' ) %>
     <% long_gain = coin[ 'long_gain' ] %>
     <% short_gain = coin[ 'short_gain' ] %>
-    <% selected = selected_for_trade?( coin, @market_status, index ) %>
+    <% selected = selected_for_trade?( coin, index ) %>
     <% trade_available = 'true' if selected %>
-    <% price_change = coin[ 'market_cap_change_percentage_24h'] %>
-    <% trajectory = coin.values[33] %>
+    <% price_change = coin[ 'market_cap_change_percentage_24h' ] %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -103,13 +104,6 @@
            <em style="font-size: 8px;">
               <%= "\u{20B1}".encode('utf-8') + humanize_price( current_price_of( coin ) ).to_s %>
            </em>
-
-            <% color = "color:" + trajectory[0] + ";" + "font-size:" + "7px" %>
-            <% prefix = trajectory[0] == 'green' ? ' + ' : ' - ' %>
-            
-            <em style=<%= color %>>
-              <%= prefix + trajectory[1].round(2).to_s + "% " + " / m" %>
-            </em>
           </div>
         </td>
 
@@ -120,10 +114,10 @@
             </div>
           
             <div class="my-grid" style="width: 100px" >
-              <% trend_sum_8h = sum_price_changes( coin['trend_8h'] ) %>
+              <% trend_sum_8h = sum_price_changes( trend_8h ) %>
 
               <div>
-                <% coin['trend_8h'].each_with_index do | trend, index | %>
+                <% trend_8h.each_with_index do | trend, index | %>
                   <% trend_change = percentage_between( trend.abs, trend_sum_8h ) %>
               
                   <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>
@@ -137,9 +131,9 @@
             </div><br>
               
             <div class="my-grid" style="width: 100px; margin-top: -10px" >
-              <% trend_sum = sum_price_changes( coin['trend'] ) %>
+              <% trend_sum = sum_price_changes( trend_45m ) %>
               
-              <% coin['trend'].each_with_index do |trend, index| %>
+              <% trend_45m.each_with_index do |trend, index| %>
                 <% trend_change = percentage_between( trend.abs, trend_sum ) %>
               
                 <% trend = "width:" + trend_change.to_s + '%;' + "background-color:" + value_color( trend ) %>
@@ -155,7 +149,7 @@
 
         <td>
           <% if coin['id'] == @trade_coin %>
-            <em style="float: right; margin-top: 18px; margin-right:5px; font-size:small">
+            <em style="float: right; margin-top: 21px; margin-right:9px; font-size: x-small">
               ATP: <%= atp.round( 2 ) %>
             </em>
           <% else %>

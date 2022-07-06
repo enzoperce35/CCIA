@@ -80,17 +80,6 @@ module ApplicationHelper
     end
   end
 
-  def selected_for_trade?( coin, market_status, index )
-    return false if market_status[ 'steady_market?' ] == false
-    return false if  index == 0
-
-    trajectory = coin.keys[ 33 ]
-
-    trade_grade = coin[ 'trade_grade' ]
-
-    trade_grade > 75 && [ 'solid upward', 'upward', 'broken down' ].include?( trajectory )
-  end
-
   def minute_difference_of( time_a, time_b )
     ( ( time_a.to_time.to_i - time_b.to_time.to_i ) / 60 ).round
   end
@@ -163,6 +152,25 @@ module ApplicationHelper
     value < 0 ? 'red' : 'green'
   end
 
+  def selected_for_trade?( coin, index )
+    return false if index == 0
+
+    traj_score = coin[ 'trend_45m' ][ 'trajectory_15m' ]
+    
+    time_mark = coin[ 'last_trend' ][ 'time_mark' ]
+
+    ( coin[ 'trade_grade' ] > 75 ) && ( traj_score >= 2 ) && ( time_mark <= 10 )
+  end
+
+  def trend_changes_of( coin, trend = nil )
+    case trend
+    when '8hr'
+      coin[ 'trend_8h' ][ 'changes' ]
+    when '45m'
+      coin[ 'trend_45m' ][ 'changes' ]
+    end
+  end
+
   def no_user_coin_yet?
     Coin.count.zero?
   end
@@ -173,13 +181,6 @@ module ApplicationHelper
 
   def percentage_between( price_a, price_b )
     ((price_a.to_f / price_b.to_f)  * 100).round(2)
-  end
-
-  def time_difference_of( time_a, time_b )
-    time_a = Time.parse( DateTime.strptime( time_a[0].to_s, "%Q" ).to_s )
-    time_b = Time.parse( DateTime.strptime( time_b[0].to_s, "%Q" ).to_s )
-
-    (time_b - time_a) / 60
   end
 
   def assemble(list)
