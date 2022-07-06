@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_28_105043) do
+ActiveRecord::Schema.define(version: 2022_07_06_220915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,9 +29,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_105043) do
     t.integer "fuse_count", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "observed?", default: false
-    t.float "observed_price"
-    t.float "on_hold"
+    t.float "profit_take"
   end
 
   create_table "market_reports", force: :cascade do |t|

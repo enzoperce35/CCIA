@@ -23,13 +23,13 @@ module CoinsHelper
     "#{ coin.coin_name }(#{ coin.coin_sym })"
   end
 
-  def user(coin)
+  def user( coin )
     coin_id = coin.is_a?( String ) ? coin : coin[ 'id' ]
     
     Coin.find_by(coin_id: coin_id) 
   end
 
-  def current_price_of( coin, currency = 'usd' )
+  def current_price_of( coin, currency = 'php' )
     case coin
     when String
       market( coin, currency )['current_price'].to_f

@@ -127,15 +127,16 @@ module ApplicationHelper
     end
   end
 
-  def generate_margins( coin, take_profit )
+  def generate_margins( coin )
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
+    atp = coin.profit_take
 
-    trade_price = coin.usd_trade_price
+    usd_price = coin.usd_trade_price
 
-    return 'N/A' if !trade_price.is_a?( Float )
+    return nil if atp.nil? || !usd_price.is_a?( Float )
     
-    [ humanize_price( ( 100 + take_profit ).percent_of( trade_price ).round( count_decimals( trade_price ) ) ),
-      humanize_price( 97.percent_of( trade_price ).round( count_decimals( trade_price ) ) ) ]
+    [ humanize_price( ( 100 + atp ).percent_of( usd_price ).round( count_decimals( usd_price ) ) ),
+      humanize_price( 97.percent_of( usd_price ).round( count_decimals( usd_price ) ) ) ]
   end
 
   def find_focus
@@ -152,14 +153,14 @@ module ApplicationHelper
     value < 0 ? 'red' : 'green'
   end
 
-  def selected_for_trade?( coin, index )
+  def selected_for_trade?( coin, index, market_status )
     return false if index == 0
 
     traj_score = coin[ 'trend_45m' ][ 'trajectory_15m' ]
     
     time_mark = coin[ 'last_trend' ][ 'time_mark' ]
 
-    ( coin[ 'trade_grade' ] > 75 ) && ( traj_score >= 2 ) && ( time_mark <= 10 )
+    ( market_status[ 'steady_market?' ] ) && ( coin[ 'trade_grade' ] > 75 ) && ( traj_score >= 2 ) && ( time_mark <= 10 )
   end
 
   def trend_changes_of( coin, trend = nil )
