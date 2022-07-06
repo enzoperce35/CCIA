@@ -4,6 +4,7 @@
 <% border_color = border_color( market_status )%>
 <% atp = average_price_change( coins ) %>
 <% trade_available = '' %>
+<%= audio_tag "mixkit-coin-win-notification-1992.wav", id:'notif-sound' %>
 
 <table class = 'table'>
 
@@ -184,12 +185,14 @@
 <script>
   function show() {
     var notifier = document.getElementById("notifier");
+    var notif_sound = document.getElementById("notif-sound");
+    
     
     if ( '<%= trade_available %>' === 'true' ) {
       notifier.hidden = false;
+      notif_sound.play();
     }
   }
-
   show()
 </script>
 
