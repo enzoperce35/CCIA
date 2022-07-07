@@ -1,0 +1,2 @@
+class MarketPattern < ApplicationRecord
+end

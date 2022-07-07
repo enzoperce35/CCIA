@@ -16,7 +16,7 @@ module CoinsHelper
   end
 
   def is_user_owned?( coin )
-    coin.fuse_count > 0
+    !coin.fuse_count.nil? && coin.fuse_count > 0
   end
 
   def show_ids( coin )

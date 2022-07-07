@@ -10,9 +10,10 @@
       <% if @selected_coin.present? %>
         <% if is_user_owned?( @selected_coin ) %>
           <div>
-            <% high, low = generate_margins( @selected_coin ) %>
-            <% atp_phrase = "atp: #{ @selected_coin.profit_take }, rise: #{ high }, drop: #{ low }" %>
-            <%=  atp_phrase unless high.nil? || low.nil? %>  
+            <% unless @selected_coin.usd_trade_price.nil? %>
+              <% high, low = generate_margins( @selected_coin ) %>
+              <%= "atp: #{ @selected_coin.profit_take }, start: #{ @selected_coin.usd_trade_price } rise: #{ high } drop: #{ low }" %>
+            <% end %>
           </div>
         <% end %>
         

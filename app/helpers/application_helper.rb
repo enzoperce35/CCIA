@@ -10,9 +10,9 @@ module ApplicationHelper
   def average_price_change( market_coins, pos = [], neg = [] )
     market_coins = market_coins.reject { | c | user( c ).coin_type == 'stablecoin' }
 
-    market_coins.each { | m | m[ 'market_cap_change_percentage_24h' ] > 0 ? pos << m[ 'market_cap_change_percentage_24h' ] : neg << m[ 'market_cap_change_percentage_24h' ] }
+    market_coins.each { | m | m[ 'price_change_percentage_24h' ] > 0 ? pos << m[ 'price_change_percentage_24h' ] : neg << m[ 'price_change_percentage_24h' ] }
 
-    ( (pos.sum - neg.sum.abs) / market_coins.count ) + 2
+    ( ( pos.sum - neg.sum.abs ) / market_coins.count )
   end
 
   def score_move( moves, m1 = 0, m2 = 0 )
@@ -40,46 +40,6 @@ module ApplicationHelper
     runs
   end
   
-  def cast_report( record, time_covered )
-    if record.bullish > 0 && record.bearish > 0
-      "detected #{ record.bullish } bull runs and #{ record.bearish } bear runs from the last #{ time_covered } minutes"
-    elsif record.bullish > 0
-      "detected #{ record.bullish } bull runs from the last #{ time_covered } minutes"
-    elsif record.bearish > 0
-      "detected #{ record.bearish } bear runs from the last #{ time_covered } minutes"
-    else
-      "market is normal for the last #{ time_covered } minutes"
-    end
-  end
-  
-  def update_report( record, status )
-    return nil if status[ 'warmth' ] != 3
-    
-    case status[ 'current_status' ]
-    when 'bullish'
-      record.update( bullish: record.bullish += 1 )
-    when 'bearish'
-      record.update( bearish: record.bearish += 1 )
-    end
-  end
-
-  def record_current( status )
-    MarketReport.first.delete if !MarketReport.first.nil? && status[ 'duration' ] < 1
-    
-    record = MarketReport.first_or_create
-    time_covered = minute_difference_of( DateTime.now.utc, record.created_at )
-    
-    if status[ 'steady_market?' ] && time_covered > 5
-      record.update( reported: true )
-         
-      cast_report( record, time_covered )
-    else
-      record.reported ? record.delete : update_report( record, status )
-      
-      ''
-    end
-  end
-
   def minute_difference_of( time_a, time_b )
     ( ( time_a.to_time.to_i - time_b.to_time.to_i ) / 60 ).round
   end
@@ -127,6 +87,17 @@ module ApplicationHelper
     end
   end
 
+  def pattern_color( trend )
+    case trend
+    when 'bullish'
+      'green;'
+    when 'bearish'
+      'red;'
+    else
+      'lightskyblue;'
+    end
+  end
+
   def generate_margins( coin )
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
     atp = coin.profit_take
@@ -153,8 +124,8 @@ module ApplicationHelper
     value < 0 ? 'red' : 'green'
   end
 
-  def selected_for_trade?( coin, index, market_status )
-    return false if index == 0
+  def selected_for_trade?( coin, index, market_status, atp )
+    return false if index == 0 || atp < 2
 
     traj_score = coin[ 'trend_45m' ][ 'trajectory_15m' ]
     

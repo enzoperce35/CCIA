@@ -40,6 +40,8 @@ puts 'seeding...'
   MarketRun.create( name: 'bearish' )
   MarketRun.create( name: 'normal' )
 
+  MarketPattern.create
+
   coin_ids = Coin.where( is_active: true ).pluck( 'coin_id' ).join(', ')
   coins = CoingeckoRuby::Client.new.markets( coin_ids, vs_currency: 'php' )
 

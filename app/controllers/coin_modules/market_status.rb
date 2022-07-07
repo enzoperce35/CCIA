@@ -8,6 +8,14 @@ end
 
 module CoinModules
   module MarketStatus
+    def update_market_pattern( status )
+      status = status.warmth == 3 ? status.name : 'normal'
+      
+      pattern = MarketPattern.first.pattern << status
+
+      MarketPattern.first.update( pattern: pattern )
+    end
+    
     def monitor_movement( new_status )
       new_status.keys.each do | key |
         market = MarketRun.find_by( name: key )
@@ -76,6 +84,7 @@ module CoinModules
     
     def restart_run
       MarketRun.update_all( started: DateTime.now, warmth: 0, runs: 0, movement: [] )
+      MarketPattern.first.update( pattern: [] )
     end
     
     def last_market_update
@@ -104,6 +113,8 @@ module CoinModules
       cool_down( opposed_market_statuses )
 
       monitor_movement( new_status )
+
+      update_market_pattern( market_status )
   
       { 'current_status' => market_status.name,
         'warmth' => market_status.warmth,
