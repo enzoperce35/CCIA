@@ -76,6 +76,21 @@ module ApplicationHelper
     end
   end
 
+  def run_info_color( duration )
+
+    size = 
+    case duration.to_s.size
+    when 1
+      'small;'
+    when 2
+      'x-small;'
+    else
+      'xx-small;'
+    end
+
+    "font-style" + ":italic;"  +  "color:" + "black;" + "font-size:" + size
+  end
+
   def border_color( status )
     case status
     when 'bearish'
@@ -94,19 +109,19 @@ module ApplicationHelper
     when 'bearish'
       'red;'
     else
-      'lightskyblue;'
+      'darkorange;'
     end
   end
 
   def generate_margins( coin )
     coin = Coin.find_by( coin_id: coin ) if coin.is_a?( String )
-    atp = coin.profit_take
+    tp = coin.profit_take
 
     usd_price = coin.usd_trade_price
 
-    return nil if atp.nil? || !usd_price.is_a?( Float )
+    return nil if tp.nil? || !usd_price.is_a?( Float )
     
-    [ humanize_price( ( 100 + atp ).percent_of( usd_price ).round( count_decimals( usd_price ) ) ),
+    [ humanize_price( ( 100 + tp ).percent_of( usd_price ).round( count_decimals( usd_price ) ) ),
       humanize_price( 97.percent_of( usd_price ).round( count_decimals( usd_price ) ) ) ]
   end
 
@@ -120,18 +135,46 @@ module ApplicationHelper
     user_coins[ middle_coin ].coin_id
   end
 
+  def take_profit( coin, apc )
+    return 15 if apc <= -5
+
+    case coin[ 'trend_8h' ][ 'uptrend_score' ]
+    when 3
+      5
+    when 2
+      10
+    else
+      15
+    end
+  end
+
   def value_color( value )
     value < 0 ? 'red' : 'green'
   end
 
-  def selected_for_trade?( coin, index, market_status, atp )
-    return false if index == 0 || atp < 2
+  def uptrending?( coin )
+    traj_15m = coin[ 'trend_45m' ][ 'trajectory_15m' ]
+    trend_30m = 100 - coin[ 'trend_45m' ][ 'dump_grade_30m' ]
 
-    traj_score = coin[ 'trend_45m' ][ 'trajectory_15m' ]
+    ( ( trend_30m >= 80 ) && ( traj_15m >= 2 ) ) ||
+    ( ( trend_30m >= 75 ) && ( traj_15m == 3 ) )
+  end
+
+  #defines if the coin's price change is relatively high from the others
+  def has_uptrend_anomaly?( coin, apc )
+    ( coin[ 'price_change_percentage_24h' ] - apc ) >= 1
+  end
+
+  def selected_for_trade?( coin, index, apc )
+    return false if index == 0
     
+    traj_score_45m = coin[ 'trend_45m' ][ 'trajectory_15m' ]
+
     time_mark = coin[ 'last_trend' ][ 'time_mark' ]
 
-    ( market_status[ 'steady_market?' ] ) && ( coin[ 'trade_grade' ] > 75 ) && ( traj_score >= 2 ) && ( time_mark <= 10 )
+    ( ( time_mark <= 20 ) && ( has_uptrend_anomaly?( coin, apc ) ) && ( uptrending?( coin ) ) ) ||
+
+    ( ( time_mark <= 10 ) && ( coin[ 'trade_grade' ] > 85 ) && ( traj_score_45m >= 2 ) && ( apc < -5 ) )
   end
 
   def trend_changes_of( coin, trend = nil )
@@ -140,6 +183,19 @@ module ApplicationHelper
       coin[ 'trend_8h' ][ 'changes' ]
     when '45m'
       coin[ 'trend_45m' ][ 'changes' ]
+    end
+  end
+
+  def break_down( trend )
+    case trend
+    when 3
+      'uptrending'
+    when 2
+      'upward'
+    when 1
+      'downward'
+    else
+      'downtrending'
     end
   end
 

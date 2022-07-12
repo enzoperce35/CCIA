@@ -12,7 +12,7 @@
           <div>
             <% unless @selected_coin.usd_trade_price.nil? %>
               <% high, low = generate_margins( @selected_coin ) %>
-              <%= "atp: #{ @selected_coin.profit_take }, start: #{ @selected_coin.usd_trade_price } rise: #{ high } drop: #{ low }" %>
+              <%= "tp: #{ @selected_coin.profit_take } start: #{ @selected_coin.usd_trade_price } rise: #{ high } drop: #{ low }" %>
             <% end %>
           </div>
         <% end %>

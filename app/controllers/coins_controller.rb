@@ -86,9 +86,9 @@ class CoinsController < ApplicationController
   def make_trade
     buy = helpers.user( params[ :buy ] )
     sell = helpers.user( params[ :sell ])
-    atp = params[ :atp ].to_i
+    tp = params[ :tp ].to_i
 
-    buy.update( fuse_count: buy.fuse_count += 1, short_gain: helpers.current_price_of( buy.coin_id ), profit_take: atp, usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ))
+    buy.update( fuse_count: buy.fuse_count += 1, short_gain: helpers.current_price_of( buy.coin_id ), profit_take: tp, usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ) )
     sell.update( fuse_count: sell.fuse_count -= 1, short_gain: helpers.current_price_of( sell.coin_id ), profit_take: nil, is_observed: true)
 
     high, low = helpers.generate_margins( buy )

@@ -26,6 +26,7 @@ module CoinModules
       end
     end
 
+    #analyzes three price changes trajectory
     def score_15m_trajectory_of( prices, score = 0 )
       prices.each_with_index do | price, index | 
         next if index == 0
@@ -98,7 +99,9 @@ module CoinModules
 
       trend_changes = market_8h_changes( trends )
     
-      coin.store( 'trend_8h', { 'changes' => trend_changes, 'dump_grade' => dump_grade_in( trend_changes ) } )
+      coin.store( 'trend_8h', { 'changes' => trend_changes,
+                                'dump_grade' => dump_grade_in( trend_changes ),
+                                'uptrend_score' => score_15m_trajectory_of( trends[96..-2] ) } )
     end
     
     def insert_coin_gains( market_coin, gains = [ 'long_gain', 'short_gain' ] )

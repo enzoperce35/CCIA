@@ -2,7 +2,7 @@
 <% trade_coin = coins.first %>
 <% market_status = @market_status[ 'current_status' ] %>
 <% border_color = border_color( market_status )%>
-<% atp = average_price_change( coins ) %>
+<% apc = average_price_change( coins ) %>
 <% trade_available = '' %>
 <%= audio_tag "mixkit-coin-win-notification-1992.wav", id:'notif-sound' %>
 
@@ -19,12 +19,12 @@
     </h4>
 
     <div>
-      <div style="float:left; width: 90%; margin-top: 1.356%">
+      <div style="float:left; width: 75%; margin-top: 3.5%;">
         <% w = ( 100.to_f / MarketPattern.first.pattern.count.to_f ) %>
         
         <% MarketPattern.first.pattern.each do | pattern | %>
 
-          <% pat = 'float:' + 'left;' + "width:" + w.to_s + '%;' + 'height:' + '3px;' + "background-color:" + pattern_color( pattern ) %>
+          <% pat = 'float:' + 'left;' +  "width:" + w.to_s + '%;' + 'height:' + '3px;' + "background-color:" + pattern_color( pattern ) %>
           
           <div style=<%= pat %>></div>
         <% end %>
@@ -34,20 +34,24 @@
         <% possible_runs = run_scores %>
         
         <div style="float:right">
-          <div class="progress" style="width: 67px; height: 3px" >
+          <div class="progress" style="width: 68px; height: 3px" >
             <% bull = "width:" + percentage_between( possible_runs[ 'bullish' ], 3 ).to_s + '%;' %>
 
             <div class="progress-bar bg-success" style=<%= bull %> role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-      
-          <div>
-            <em style="font-style:italic; font-weight:bold; color: black"><%= @market_status[ 'duration' ].to_s + 'm' %>
-            <em style="font-style:italic; font-weight:bold; color: green"><%= @market_status[ 'bull_runs' ].to_s %></em>
-            <em style="font-style:italic; font-weight:bold; color: black">:</em>
-            <em style="font-style:italic; font-weight:bold; color: red"><%= @market_status[ 'bear_runs' ].to_s %></em>
+
+          <div style="text-align: center;">
+            <% run_info = run_info_color( @market_status[ 'duration' ] ) %>
+            
+            <em style=<%= run_info %>>
+              <%= @market_status[ 'duration' ].to_s + 'm' %>
+            </em>
+            <em style="font-style:italic; font-size: small; color: green"><%= @market_status[ 'bull_runs' ].to_s %></em>
+            <em style="font-style:italic; font-size: small; color: black">:</em>
+            <em style="font-style:italic; font-size: small; color: red"><%= @market_status[ 'bear_runs' ].to_s %></em>
           </div>
       
-          <div class="progress" style="width: 67px; height: 3px" >
+          <div class="progress" style="width: 68px; height: 3px" >
             <% bear = "width:" + percentage_between( possible_runs[ 'bearish' ], 3 ).to_s + '%;' %>
 
             <div class="progress-bar bg-danger" style=<%= bear %> role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
@@ -71,9 +75,10 @@
     <% trend_45m = trend_changes_of( coin, '45m' ) %>
     <% long_gain = coin[ 'long_gain' ] %>
     <% short_gain = coin[ 'short_gain' ] %>
-    <% selected = selected_for_trade?( coin, index, @market_status, atp ) %>
+    <% selected = selected_for_trade?( coin, index, apc ) %>
     <% trade_available = 'true' if selected %>
     <% price_change = coin[ 'market_cap_change_percentage_24h' ] %>
+    <% take_profit = take_profit( coin, apc ) %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -166,10 +171,10 @@
         <td>
           <% if coin['id'] == @trade_coin %>
             <em style="float: right; margin-top: 21px; margin-right:9px; font-size: x-small">
-              ATP: <%= atp.round( 2 ) %>
+              APC: <%= apc.round( 2 ) %>
             </em>
           <% else %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, atp: atp ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ atp.round(2) }" } do %>
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, tp: take_profit ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ take_profit } %" } do %>
               <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>
