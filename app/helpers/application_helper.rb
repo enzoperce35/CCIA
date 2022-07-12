@@ -109,7 +109,7 @@ module ApplicationHelper
     when 'bearish'
       'red;'
     else
-      'darkorange;'
+      'gold;'
     end
   end
 
@@ -172,9 +172,10 @@ module ApplicationHelper
 
     time_mark = coin[ 'last_trend' ][ 'time_mark' ]
 
-    ( ( time_mark <= 20 ) && ( has_uptrend_anomaly?( coin, apc ) ) && ( uptrending?( coin ) ) ) ||
+    ( ( time_mark <= 20 )  && ( uptrending?( coin ) ) )
+    #( ( time_mark <= 20 ) && ( has_uptrend_anomaly?( coin, apc ) ) && ( uptrending?( coin ) ) ) ||
 
-    ( ( time_mark <= 10 ) && ( coin[ 'trade_grade' ] > 85 ) && ( traj_score_45m >= 2 ) && ( apc < -5 ) )
+    #( ( time_mark <= 10 ) && ( coin[ 'trade_grade' ] > 85 ) && ( traj_score_45m >= 2 ) && ( apc < -5 ) )
   end
 
   def trend_changes_of( coin, trend = nil )
