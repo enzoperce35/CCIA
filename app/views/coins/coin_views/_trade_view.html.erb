@@ -78,7 +78,6 @@
     <% selected = selected_for_trade?( coin, index, apc ) %>
     <% trade_available = 'true' if selected %>
     <% price_change = coin[ 'market_cap_change_percentage_24h' ] %>
-    <% take_profit = take_profit( coin, apc ) %>
 
     <% id_target = 'prog-' + index.to_s %>
     <% status = coin['vs_24h'] %>
@@ -169,43 +168,19 @@
         </td>
 
         <td>
-          <div>
-            <div>
           <% if coin['id'] == @trade_coin %>
-            <em style="float: right; margin-top: 0px; margin-right:9px; font-size: x-small">
+            <em style="float: right; margin-top: 21px; margin-right:9px; font-size: x-small">
               APC: <%= apc.round( 2 ) %>
             </em>
           <% else %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, tp: take_profit ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ take_profit } %" } do %>
-              <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 0px; padding-left: 0%; padding-right: 0%; float:right">
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is 10%" } do %>
+              <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>
                 <img src=<%= coin['image']%> style="width: 21px">
               </button>
             <% end %>
-          <% end %></div><br>
-
-          <div class="parent-container d-flex" style="font-size: xx-small; float:right">
-            <div class="container">
-              <em>24: <%= coin[ 'vs_24h' ] %></em><br>
-              <em>tg: <%= coin[ 'trade_grade' ].round(2) %></em><br>
-              <em>tm: <%= coin[ 'last_trend' ][ 'time_mark' ] %></em><br>
-              <em>tp: <%= take_profit %></em>
-            </div>
-
-           
-
-            <div class="container">
-              <em>ua: <%= (coin[ 'price_change_percentage_24h' ] - apc).round(2) %></em><br>
-              <em>up: <%= uptrending?( coin ) %></em><br>
-              <em>30: <%= (100 - coin[ 'trend_45m' ][ 'dump_grade_30m' ]).round(2) %></em><br>
-              <em>8h: <%= (100 - coin[ 'trend_8h' ][ 'dump_grade' ]).round(2) %></em>
-            </div>
-            
-            
-            
-            
-          </div></div>
+          <% end %>
         </td>
       </tr>
     </tbody>
