@@ -143,8 +143,8 @@ module ApplicationHelper
     traj_15m = coin[ 'trend_45m' ][ 'trajectory_15m' ]
     trend_30m = 100 - coin[ 'trend_45m' ][ 'dump_grade_30m' ]
 
-    ( ( trend_30m >= 80 ) && ( traj_15m >= 2 ) ) ||
-    ( ( trend_30m >= 75 ) && ( traj_15m == 3 ) )
+    ( ( trend_30m >= TradeSetting.first.pump_30m ) && ( traj_15m >= 2 ) ) ||
+    ( ( trend_30m >= TradeSetting.first.pump_30m - 5 ) && ( traj_15m == 3 ) )
   end
 
   def uptrend_anomaly( coin, apc )
@@ -160,9 +160,13 @@ module ApplicationHelper
 
     dump_8h = coin[ 'trend_8h'][ 'dump_grade']
 
-    ( ( time_mark <= 20 ) && ( uptrend_anomaly( coin, apc ) >= 3 ) && ( uptrending?( coin ) ) && ( coin[ 'vs_24h' ] <= 80 ) && ( dump_8h >= 70 ) ) ||
+    ( ( time_mark <= TradeSetting.first.time_mark ) &&
+      ( uptrend_anomaly( coin, apc ) >= TradeSetting.first.uptrend_anomaly ) &&
+      ( uptrending?( coin ) ) &&
+      ( coin[ 'vs_24h' ] <= TradeSetting.first.vs_24h ) &&
+      ( dump_8h >= TradeSetting.first.dump_8h ) ) ||
 
-    ( ( time_mark <= 10 ) && ( coin[ 'trade_grade' ] > 90 ) && ( traj_score_45m >= 2 ) && ( apc < -5 ) )
+    ( ( time_mark <= 10 ) && ( coin[ 'trade_grade' ] > 85 ) && ( traj_score_45m >= 2 ) && ( apc < -5 ) )
   end
 
   def trend_changes_of( coin, trend = nil )

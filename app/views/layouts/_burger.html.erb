@@ -49,6 +49,12 @@
         <br><br><%= link_to 'Sign_out', destroy_user_session_path, method: 'delete' %><br><br>
       </div>
 
+      <div>
+        <% if @user_view == 'trade_view' %>
+          <%= link_to 'Trade Settings', edit_trade_setting_path( TradeSetting.first ), method: 'get' %>
+        <% end %>
+      </div>
+
       <% unless @user_view == 'inactive_coins_view' %>
         <div>
           <%= link_to 'Reset Short Gain Data', coins_gain_reset_path( gain: 'short' ), method: 'post', data: { confirm: 'Are you sure you want to reset short gain data?' }  %>

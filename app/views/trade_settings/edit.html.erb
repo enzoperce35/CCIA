@@ -1,0 +1,24 @@
+<%= simple_form_for @setting do |f| %>
+  <%= f.label 'Time Mark' %> 
+  <%= f.input :time_mark, label: false, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label 'Price Change' %> 
+  <%= f.input :vs_24h, label: false, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label 'Profit Take' %> 
+  <%= f.input :profit_take, label: false, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label 'Uptrend Anomaly' %> 
+  <%= f.input :uptrend_anomaly, label: false, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label '30m Pump' %> 
+  <%= f.input :pump_30m, label: false, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label '8h Dump' %> 
+  <%= f.input :dump_8h, label: false, input_html: { class: "form-control", required: true } %><br>
+  
+  <%= f.label 'Uptrending?' %> 
+  <%= f.check_box :uptrending, label: false %><br><br>
+  
+  <%= f.submit 'Submit' %> 
+<% end %>

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  time_mark: 1.5
+  profit_take: 1.5
+  uptrend_anomaly: 1.5
+  uptrending: false
+  30m_pump: 1.5
+  8h_dump: 1.5
+  trade_grade: 1.5
+
+two:
+  time_mark: 1.5
+  profit_take: 1.5
+  uptrend_anomaly: 1.5
+  uptrending: false
+  30m_pump: 1.5
+  8h_dump: 1.5
+  trade_grade: 1.5

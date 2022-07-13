@@ -41,6 +41,7 @@ puts 'seeding...'
   MarketRun.create( name: 'normal' )
 
   MarketPattern.create
+  TradeSetting.create( time_mark: 20, vs_24h: 80, profit_take: 10, uptrend_anomaly: 3, uptrending: true, pump_30m: 80, dump_8h: 60 )
 
   coin_ids = Coin.where( is_active: true ).pluck( 'coin_id' ).join(', ')
   coins = CoingeckoRuby::Client.new.markets( coin_ids, vs_currency: 'php' )

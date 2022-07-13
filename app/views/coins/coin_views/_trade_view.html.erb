@@ -173,7 +173,7 @@
               APC: <%= apc.round( 2 ) %>
             </em>
           <% else %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is 10%" } do %>
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ TradeSetting.first.profit_take }%" } do %>
               <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>

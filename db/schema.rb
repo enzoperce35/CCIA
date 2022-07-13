@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_07_082541) do
+ActiveRecord::Schema.define(version: 2022_07_13_100430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,19 @@ ActiveRecord::Schema.define(version: 2022_07_07_082541) do
     t.integer "runs", default: 0
     t.datetime "started"
     t.text "movement", default: [], array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "trade_settings", force: :cascade do |t|
+    t.float "time_mark"
+    t.float "vs_24h"
+    t.float "trade_grade"
+    t.float "profit_take"
+    t.float "uptrend_anomaly"
+    t.boolean "uptrending"
+    t.float "pump_30m"
+    t.float "dump_8h"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

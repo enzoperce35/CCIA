@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   post 'coins/observe'
 
   resources :coins
+  resources :trade_settings, only: [ :edit, :update ]
 end
