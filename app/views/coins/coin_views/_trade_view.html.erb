@@ -75,6 +75,7 @@
     <% trend_45m = trend_changes_of( coin, '45m' ) %>
     <% long_gain = coin[ 'long_gain' ] %>
     <% short_gain = coin[ 'short_gain' ] %>
+    <% profit_take = coin[ 'trend_8h' ][ 'dump_grade_8h' ] < 75 ? 5 : 10 %>
     <% selected = selected_for_trade?( coin, index, market_status ) %>
     <% trade_available = 'true' if selected %>
     <% price_change = coin[ 'market_cap_change_percentage_24h' ] %>
@@ -173,7 +174,7 @@
               APC: <%= apc.round( 2 ) %>
             </em>
           <% else %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ TradeSetting.first.profit_take }%" } do %>
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, tp: profit_take ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ profit_take }%" } do %>
               <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>
