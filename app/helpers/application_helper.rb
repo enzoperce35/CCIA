@@ -139,34 +139,50 @@ module ApplicationHelper
     value < 0 ? 'red' : 'green'
   end
 
-  def uptrending?( coin )
-    traj_15m = coin[ 'trend_45m' ][ 'trajectory_15m' ]
-    trend_30m = 100 - coin[ 'trend_45m' ][ 'dump_grade_30m' ]
-
-    ( ( trend_30m >= TradeSetting.first.pump_30m ) && ( traj_15m >= 2 ) ) ||
-    ( ( trend_30m >= TradeSetting.first.pump_30m - 5 ) && ( traj_15m == 3 ) )
-  end
-
-  def uptrend_anomaly( coin, apc )
-    coin[ 'price_change_percentage_24h' ] - apc
-  end
-
-  def selected_for_trade?( coin, index, apc )
+  def selected_for_trade?( coin, index, market_status )
     return false if index == 0
     
-    traj_score_45m = coin[ 'trend_45m' ][ 'trajectory_15m' ]
+    traj_45m = coin[ 'trend_45m' ][ 'trajectory_45m' ]
+   
+    traj_8h = coin[ 'trend_8h' ][ 'trajectory_8h' ]
 
+    dump_45m = coin[ 'trend_45m' ][ 'dump_grade_45m' ]
+    
+    dump_8h = coin[ 'trend_8h' ][ 'dump_grade_8h' ]
+    
     time_mark = coin[ 'last_trend' ][ 'time_mark' ]
 
-    dump_8h = coin[ 'trend_8h'][ 'dump_grade']
+    # coin has a sign of pump start
+    ( ( time_mark <= 20 ) && 
+      ( traj_8h == 2 ) &&
+      ( dump_8h >= 75 ) &&
+      ( dump_45m <= 15 ) &&
+      ( traj_45m == 3 ) &&
+      market_status == 'normal' ) ||
 
-    ( ( time_mark <= TradeSetting.first.time_mark ) &&
-      ( uptrend_anomaly( coin, apc ) >= TradeSetting.first.uptrend_anomaly ) &&
-      ( uptrending?( coin ) ) &&
-      ( coin[ 'vs_24h' ] <= TradeSetting.first.vs_24h ) &&
-      ( dump_8h >= TradeSetting.first.dump_8h ) ) ||
-
-    ( ( time_mark <= 10 ) && ( coin[ 'trade_grade' ] > 85 ) && ( traj_score_45m >= 2 ) && ( apc < -5 ) )
+    # coin has a sign of pump continuation
+    ( ( time_mark <= 20 ) && 
+      ( traj_8h == 3 ) &&
+      ( dump_8h >= 65 ) &&
+      ( dump_45m <= 20 ) &&
+      ( traj_45m >= 2 ) &&
+      market_status == 'normal' ) ||
+    
+    # coin dump is very high
+    ( ( time_mark <= 20 ) &&
+      ( traj_8h == 0 ) &&
+      ( dump_8h >= 95 ) &&
+      ( dump_45m >= 90 ) &&
+      ( traj_45m == 3 ) &&
+      market_status == 'normal' ) ||
+    
+    # coin dump is extremely high
+    ( ( time_mark <= 20 ) &&
+      ( traj_8h == 0 ) &&
+      ( dump_8h >= 100 ) &&
+      ( dump_45m >= 97 ) &&
+      ( traj_45m >= 2 ) &&
+      market_status == 'normal' )
   end
 
   def trend_changes_of( coin, trend = nil )

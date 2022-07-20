@@ -17,8 +17,8 @@ module CoinModules
 
     def insert_trade_grade_of( coins )
       coins.each_with_index do |coin|
-        grade_a = coin[ 'trend_8h' ][ 'dump_grade' ]
-        grade_b = coin[ 'trend_45m' ][ 'dump_grade_30m' ]
+        grade_a = coin[ 'trend_8h' ][ 'dump_grade_8h' ]
+        grade_b = coin[ 'trend_45m' ][ 'dump_grade_45m' ]
 
         total = ( grade_a * 0.30 ) + ( grade_b * 0.70 )
 
@@ -78,8 +78,8 @@ module CoinModules
       
       coin.store( 'trend_45m', { 'changes' => trend_changes,
                                  'last_change' => trend_changes[-1],
-                                 'dump_grade_30m' => dump_grade_in( trend_changes[0..6] ),
-                                 'trajectory_15m' => score_15m_trajectory_of( trend[8..-1] ) } )
+                                 'dump_grade_45m' => dump_grade_in( trend_changes ),
+                                 'trajectory_45m' => score_15m_trajectory_of( trend[8..-1] ) } )
     end
 
     def market_8h_changes( trends, arr = [] )
@@ -100,8 +100,8 @@ module CoinModules
       trend_changes = market_8h_changes( trends )
     
       coin.store( 'trend_8h', { 'changes' => trend_changes,
-                                'dump_grade' => dump_grade_in( trend_changes ),
-                                'uptrend_score' => score_15m_trajectory_of( trends[96..-2] ) } )
+                                'dump_grade_8h' => dump_grade_in( trend_changes ),
+                                'trajectory_8h' => score_15m_trajectory_of( trends[97..-1] ) } )
     end
     
     def insert_coin_gains( market_coin, gains = [ 'long_gain', 'short_gain' ] )

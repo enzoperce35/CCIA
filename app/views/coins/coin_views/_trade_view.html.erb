@@ -75,7 +75,7 @@
     <% trend_45m = trend_changes_of( coin, '45m' ) %>
     <% long_gain = coin[ 'long_gain' ] %>
     <% short_gain = coin[ 'short_gain' ] %>
-    <% selected = selected_for_trade?( coin, index, apc ) %>
+    <% selected = selected_for_trade?( coin, index, market_status ) %>
     <% trade_available = 'true' if selected %>
     <% price_change = coin[ 'market_cap_change_percentage_24h' ] %>
 
