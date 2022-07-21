@@ -159,21 +159,6 @@ module ApplicationHelper
       ( dump_45m <= 25 ) &&
       ( traj_45m == 3 ) &&
       market_status == 'normal' ) ||
-
-    # coin has a sign of early pump continuation
-    ( ( time_mark <= 20 ) && 
-      ( traj_8h == 3 ) &&
-      ( dump_8h >= 75 ) &&
-      ( dump_45m <= 25 ) &&
-      ( traj_45m >= 2 ) &&
-      market_status == 'normal' ) ||
-    
-    # coin has a sign of late pump continuation 
-    ( ( time_mark <= 20 ) && 
-      ( traj_8h == 3 ) &&
-      ( dump_45m <= 25 ) &&
-      ( traj_45m >= 2 ) &&
-      market_status == 'normal' ) ||
     
     # coin dump is very high
     ( ( time_mark <= 20 ) &&
