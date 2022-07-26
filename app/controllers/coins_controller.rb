@@ -120,6 +120,16 @@ class CoinsController < ApplicationController
     redirect_to root_path( actives: true )
   end
 
+  def price_range
+    Coin.active.each do | coin |
+      minmax = helpers.client.hourly_historical_price( coin.coin_id, currency: 'php', days: 30 )['prices'].map { |c| c[ 1 ] }.minmax
+      
+      coin.update( min_max: minmax )
+    end
+
+    redirect_to home_path, notice: 'Price ranges successfuly catched'
+  end
+
   private
 
   def refresh_gain_data( coin, price )

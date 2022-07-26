@@ -8,7 +8,7 @@
       <th></th>
     </tr>
   </thead>
-  
+
   <% all_coins.each_with_index do |coin, index| %>
     <% user_coin = user( coin ) %>
     <% changes_45m = trend_changes_of( coin, '45m' ) %>
@@ -19,7 +19,6 @@
     <% status = coin['vs_24h'] %>
     <% data = status.to_s + '%' %>
     <% index = index.to_s %>
-    
     <tbody>
       <tr id="<%= coin['id'] %>">
         <td style="margin-bottom: 0%; font-size: smaller;">

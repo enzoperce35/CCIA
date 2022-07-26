@@ -139,42 +139,25 @@ module ApplicationHelper
     value < 0 ? 'red' : 'green'
   end
 
-  def selected_for_trade?( coin, index, market_status )
-    return false if index == 0
-    
-    traj_45m = coin[ 'trend_45m' ][ 'trajectory_45m' ]
-   
+  def price_30d_color( coin )
     traj_8h = coin[ 'trend_8h' ][ 'trajectory_8h' ]
 
-    dump_45m = coin[ 'trend_45m' ][ 'dump_grade_45m' ]
-    
-    dump_8h = coin[ 'trend_8h' ][ 'dump_grade_8h' ]
-    
-    time_mark = coin[ 'last_trend' ][ 'time_mark' ]
+    case traj_8h
+    when 'upward'
+      "bg-success"
+    when 'downward'
+      "bg-danger"
+    else
+      "bg-warning"
+    end
+  end
 
-    # coin has a sign of pump start
-    ( ( time_mark <= 20 ) && 
-      ( traj_8h == 2 ) &&
-      ( dump_8h >= 90 ) &&
-      ( dump_45m <= 25 ) &&
-      ( traj_45m == 3 ) &&
-      market_status == 'normal' ) ||
+  def selected_for_trade?( coin, index )
+    return false if index == 0
     
-    # coin dump is very high
-    ( ( time_mark <= 20 ) &&
-      ( traj_8h == 0 ) &&
-      ( dump_8h >= 95 ) &&
-      ( dump_45m >= 90 ) &&
-      ( traj_45m == 3 ) &&
-      market_status == 'normal' ) ||
-    
-    # coin dump is extremely high
-    ( ( time_mark <= 20 ) &&
-      ( traj_8h == 0 ) &&
-      ( dump_8h >= 100 ) &&
-      ( dump_45m >= 97 ) &&
-      ( traj_45m >= 2 ) &&
-      market_status == 'normal' )
+    traj_8h = coin[ 'trend_8h' ][ 'trajectory_8h' ]
+
+    traj_8h == 'upward'
   end
 
   def trend_changes_of( coin, trend = nil )

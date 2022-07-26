@@ -1,48 +1,9 @@
 module CoinModules 
   module ExtraValues
-    def dump_grade_in( changes, total = 0, dumps = 0 )
-      changes.each do | change |
-        total += change.abs
-        dumps += change.abs if change < 0
-      end
-
-      helpers.percentage_between( dumps, total )
-    end
-    
     def get_trend_change_of( prices, count )
       count -= count * 2 + 1
     
       prices['prices'][count..-1]
-    end
-
-    def insert_trade_grade_of( coins )
-      coins.each_with_index do |coin|
-        grade_a = coin[ 'trend_8h' ][ 'dump_grade_8h' ]
-        grade_b = coin[ 'trend_45m' ][ 'dump_grade_45m' ]
-
-        total = ( grade_a * 0.30 ) + ( grade_b * 0.70 )
-
-        coin.store( 'trade_grade', total )
-      end
-    end
-
-    #analyzes three price changes trajectory
-    def score_15m_trajectory_of( prices, score = 0 )
-      prices.each_with_index do | price, index | 
-        next if index == 0
-    
-        price_a = prices[ index-1 ][1]
-    
-        price_b = price[1]
-
-        if index == 1 && price_b > price_a
-          score += 1
-        elsif index == 2 && price_b > price_a
-          score += 2
-        end
-      end
-      
-      score
     end
 
     def second_difference_of( last_timestamp )
@@ -77,9 +38,7 @@ module CoinModules
       trend_changes = market_45m_changes( trend )
       
       coin.store( 'trend_45m', { 'changes' => trend_changes,
-                                 'last_change' => trend_changes[-1],
-                                 'dump_grade_45m' => dump_grade_in( trend_changes ),
-                                 'trajectory_45m' => score_15m_trajectory_of( trend[8..-1] ) } )
+                                 'last_change' => trend_changes[-1] } )
     end
 
     def market_8h_changes( trends, arr = [] )
@@ -93,6 +52,48 @@ module CoinModules
       end
       arr
     end
+
+    def analyze_trend( minmax, upward = 0, downward = 0 )
+      minmax.each_with_index do | arr, index |
+        next if index == 0
+    
+        arr_a_max = minmax[ index-1 ][ 1 ]
+        
+        arr_a_min = minmax[ index-1 ][ 0 ]
+    
+        arr_b_max = arr[ 1 ]
+        
+        arr_b_min = arr[ 0 ]
+  
+        upward += 1 if ( arr_b_max > arr_a_max ) && ( arr_b_min > arr_a_min )
+        
+        downward += 1 if ( arr_b_max < arr_a_max ) && ( arr_b_min < arr_a_min )
+      end
+
+      if upward == 3
+        'upward'
+      elsif downward == 3
+        'downward'
+      else
+        'volatile'
+      end
+    end
+    
+    def catch_hl( trends, arr = [] )
+      trends.each do | trend |
+        arr << trend.map { | t | t[1] }.minmax
+      end
+      
+      arr
+    end
+
+    def coin_trajectory( coin, trends )
+      trends = trends.each_slice( 25 ).to_a
+      
+      minmax = catch_hl( trends )
+      
+      analyze_trend( minmax )
+    end
     
     def insert_8_hr_trend_of( coin, prices )
       trends = get_trend_change_of( prices, 99 )
@@ -100,8 +101,7 @@ module CoinModules
       trend_changes = market_8h_changes( trends )
     
       coin.store( 'trend_8h', { 'changes' => trend_changes,
-                                'dump_grade_8h' => dump_grade_in( trend_changes ),
-                                'trajectory_8h' => score_15m_trajectory_of( trends[97..-1] ) } )
+                                'trajectory_8h' => coin_trajectory( coin, trends ) } )
     end
     
     def insert_coin_gains( market_coin, gains = [ 'long_gain', 'short_gain' ] )
@@ -110,6 +110,7 @@ module CoinModules
       gain = gains.pop
       
       user_coin = helpers.user( market_coin )
+      
       user_price = gain == 'long_gain' ? user_coin.long_gain : user_coin.short_gain
         
       market_coin.store( gain, user_price.nil? ? 'N/A' : helpers.percentage_between( market_coin[ 'current_price' ], user_price ) - 100 )
@@ -125,6 +126,14 @@ module CoinModules
       helpers.percentage_between(current, range)
     end
     
+    def insert_current_vs_30d_prices_of( coin )
+      user_coin = helpers.user( coin )
+      
+      difference = get_difference( user_coin.min_max[ 1 ].to_f, user_coin.min_max[ 0 ].to_f, helpers.current_price_of( coin ) )
+  
+      coin.store( "vs_30d",  difference )
+    end
+    
     def insert_current_vs_24h_prices_of( coin )
       difference = get_difference( coin[ 'high_24h' ], coin[ 'low_24h' ], helpers.current_price_of( coin ) )
   
@@ -138,9 +147,11 @@ module CoinModules
     
       coins.map do |coin|
         prices = client_user.minutely_historical_price( coin[ 'id' ] )
-      
+
         insert_current_vs_24h_prices_of( coin )
-      
+        
+        insert_current_vs_30d_prices_of( coin )
+        
         insert_coin_gains( coin )
       
         insert_8_hr_trend_of( coin, prices )
@@ -149,8 +160,7 @@ module CoinModules
 
         insert_history_vs_current_price( coin, prices )
       end
-      insert_trade_grade_of( coins )
-      
+
       coins
     end
   end 
