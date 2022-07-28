@@ -88,12 +88,12 @@ class CoinsController < ApplicationController
     sell = helpers.user( params[ :sell ])
     tp = params[ :tp ]
 
-    buy.update( fuse_count: buy.fuse_count += 1, short_gain: helpers.current_price_of( buy.coin_id ), profit_take: tp, usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ) )
+    buy.update( fuse_count: buy.fuse_count += 1, short_gain: helpers.current_price_of( buy.coin_id ), profit_take: 10, usd_trade_price: helpers.current_price_of( buy.coin_id, 'usd' ) )
     sell.update( fuse_count: sell.fuse_count -= 1, short_gain: helpers.current_price_of( sell.coin_id ), profit_take: nil, is_observed: true)
 
     high, low = helpers.generate_margins( buy )
 
-    redirect_to root_path, method: 'get', notice: "set #{ buy.coin_sym }: high => #{ high } - low => #{ low }" 
+    redirect_to root_path, method: 'get', notice: "set #{ buy.coin_sym }: time => #{ tp } high => #{ high } - low => #{ low }" 
   end
 
   def gain_reset

@@ -75,7 +75,7 @@
     <% trend_45m = trend_changes_of( coin, '45m' ) %>
     <% long_gain = coin[ 'long_gain' ] %>
     <% short_gain = coin[ 'short_gain' ] %>
-    <% profit_take = 10 %>
+    <% profit_take = generate_tp_time( coin[ 'vs_30d' ] ) %>
     <% selected = selected_for_trade?( coin, index ) %>
     <% trade_available = 'true' if selected %>
     <% price_change = coin[ 'market_cap_change_percentage_24h' ] %>
@@ -129,7 +129,7 @@
         <td style="padding:0%">
           <div style="margin-top:15px;">
             <div class="progress" style="width: 100px; height: 10px; margin-top:7px" >
-              <% width_data = "width:" + coin[ 'vs_30d'].to_s + '%;' %>
+              <% width_data = "width:" + coin[ 'vs_30d' ].to_s + '%;' %>
               <% color_data = price_30d_color( coin ) %>
   
               <div class="progress-bar <%= color_data %>" + <%= color_data %> style=<%= width_data %> role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
@@ -179,7 +179,7 @@
               APC: <%= apc.round( 2 ) %>
             </em>
           <% else %>
-            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, tp: profit_take ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, average profit take is #{ profit_take }%" } do %>
+            <%= link_to coins_make_trade_path( buy: coin['id'], sell: @trade_coin, tp: profit_take ), method: 'post', data: { confirm: "Are you sure you want to trade these coins?, profit take is at #{ profit_take }" } do %>
               <button  type="button" class="<%= button_color( coin ) %>" style="width:60px; height: 30px; font-size:xx-small; margin-top: 13px; padding-left: 0%; padding-right: 0%; float:right">
                 <img src=<%= trade_coin['image'] %> style="width: 21px">
                 =>

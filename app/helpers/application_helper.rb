@@ -125,6 +125,20 @@ module ApplicationHelper
       humanize_price( 97.percent_of( usd_price ).round( count_decimals( usd_price ) ) ) ]
   end
 
+  def generate_tp_time( percentage )
+    time = 
+    if percentage >= 90
+      10.percent_of( 24 )
+    elsif percentage <= 0
+      100.percent_of( 24 )
+    else
+      ( 100 - percentage ).percent_of( 24 )
+    end
+  
+    
+    (DateTime.now + ( time / 24 )).strftime("%I:%M%p")
+  end
+
   def find_focus
     user_coins = Coin.owned
 
